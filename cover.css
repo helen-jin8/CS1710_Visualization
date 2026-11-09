@@ -1,0 +1,462 @@
+/* ===== Cover (V18): pixel UI on white ===== */
+/* Layout unchanged: portrait centre, career list right, title top-left, Start bottom-right. Everything drawn with hard pixel edges. */
+.cover-page.v16{
+  --paper:#f7f6f2;          /* near-white, slightly warm */
+  --ink:#2b2140;            /* dark purple ink (outline color of the sprites) */
+  --ink-soft:#6b6478;
+  --mark:#f2c84b;           /* the one accent */
+  --mark2:#c9a030;
+  --panel:#ffffff;
+  --px:4px;                 /* one "screen pixel" */
+  --pixel:"Press Start 2P","Silkscreen",monospace;
+  --pixel2:"Silkscreen","Press Start 2P",monospace;
+  --mono:"VT323","Courier New",monospace;
+  padding:0;overflow:hidden;background:var(--paper);color:var(--ink);font-family:var(--mono);
+}
+/* faint dot grid, pure pixels */
+.cover-page.v16::before{content:"";position:absolute;inset:0;top:0;left:0;right:0;height:auto;transform:none;clip-path:none;opacity:1;mix-blend-mode:normal;pointer-events:none;
+  background:radial-gradient(circle,rgba(43,33,64,.13) 1px,transparent 1.2px) 12px 12px/24px 24px}
+.cover-page.v16::after{display:none}
+.cover-page.v16 .cv-defs{position:absolute;width:0;height:0;overflow:hidden}
+
+/* pixel box: hard border + stepped corner + offset shadow */
+.scrap-paper{position:relative;background:var(--panel);border:var(--px) solid var(--ink);box-shadow:var(--px) var(--px) 0 var(--ink)}
+.scrap-paper::before{content:none}
+.scrap-paper.mark{background:var(--mark)}
+/* stepped (pixel) corners */
+.scrap-paper{clip-path:polygon(var(--px) 0,calc(100% - var(--px)) 0,100% var(--px),100% calc(100% - var(--px)),calc(100% - var(--px)) 100%,var(--px) 100%,0 calc(100% - var(--px)),0 var(--px))}
+
+/* --- title --- */
+.cv-title{position:absolute;left:5%;top:3%;z-index:5;display:inline-block;padding:.9em 1em .85em;transform:none;
+  font-family:var(--pixel);font-size:24px;line-height:1.5;letter-spacing:0;white-space:nowrap;text-shadow:none}
+.cv-title .u{background:linear-gradient(transparent 62%,var(--mark) 62% 100%)}
+
+/* --- centre portrait --- */
+.cv-figure{position:absolute;left:13.75%;top:25%;width:42.5%;height:49%;z-index:4;display:grid;place-items:end center}
+.cv-cut{position:absolute;inset:0;display:grid;place-items:end center}
+.cv-stack{position:absolute;inset:0;transform-origin:50% 100%}
+.cv-stack img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 100%;image-rendering:pixelated;filter:drop-shadow(var(--px) var(--px) 0 rgba(43,33,64,.22))}
+/* pixel-style idle: whole-pixel hops, frame by frame (no scaling/rotating = no "jelly").
+   6 frames: 0 -> up 1 -> up 2 -> up 3 -> up 2 -> up 1  (1 "screen pixel" = --px = 4px, so the top is 12px) */
+.cv-person{animation:cvIdle 1.8s steps(1,end) infinite}
+@keyframes cvIdle{
+  0%{transform:translateY(0)}
+  16.66%{transform:translateY(calc(var(--px)*-1))}
+  33.33%{transform:translateY(calc(var(--px)*-2))}
+  50%{transform:translateY(calc(var(--px)*-3))}
+  66.66%{transform:translateY(calc(var(--px)*-2))}
+  83.33%{transform:translateY(calc(var(--px)*-1))}
+  100%{transform:translateY(0)}}
+/* switching: the current person slides away while fading out, THEN the next one slides in from the other side while fading in.
+   (next: exit left / enter from right; previous: mirrored). Never two people at once. */
+.cv-cut.out .cv-stack{animation:cvSlideFadeOut .32s ease-in both}
+.cv-cut.in .cv-stack{animation:cvSlideFadeIn .4s ease-out .3s both}
+.cv-cut.out.to-l .cv-stack{--dx:-22%}.cv-cut.out.to-r .cv-stack{--dx:22%}
+.cv-cut.in.from-l .cv-stack{--dx:-22%}.cv-cut.in.from-r .cv-stack{--dx:22%}
+@keyframes cvSlideFadeOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(var(--dx))}}
+@keyframes cvSlideFadeIn{from{opacity:0;transform:translateX(var(--dx))}to{opacity:1;transform:translateX(0)}}
+@media (prefers-reduced-motion:reduce){.cv-cut.in .cv-stack,.cv-cut.out .cv-stack{animation-duration:.01s;animation-delay:0s}.cv-person{animation:none}}
+
+/* name tag under the figure: pixel label */
+.cv-tag{position:absolute;left:35%;bottom:16%;transform:translateX(-50%);z-index:6;padding:.55em 1em .5em;font-family:var(--pixel2);font-size:18px;line-height:1.2;white-space:nowrap;text-align:center}
+.cv-tag b{font-family:var(--pixel);font-weight:400;font-size:.95em;margin-right:.7em}
+.cv-tag span{color:var(--ink-soft)}
+
+/* --- arrows: stair-stepped pixel triangles --- */
+.cv-arrow{position:absolute;top:49%;width:5%;aspect-ratio:1;z-index:9;border:0;background:transparent;cursor:pointer;padding:0;transform:translateY(-50%);transition:transform .1s steps(2)}
+.cv-arrow.left{left:7.5%}.cv-arrow.right{left:57.5%}
+.cv-arrow svg{width:100%;height:100%;overflow:visible;shape-rendering:crispEdges;filter:drop-shadow(var(--px) var(--px) 0 rgba(43,33,64,.25))}
+.cv-arrow:hover{transform:translateY(-50%) translateX(0) scale(1.08)}
+.cv-arrow.left:hover{transform:translateY(-50%) translateX(-4px)}
+.cv-arrow.right:hover{transform:translateY(-50%) translateX(4px)}
+.cv-arrow:active{transform:translateY(-50%) scale(.94)}
+.cv-arrow:focus-visible{outline:var(--px) solid var(--ink);outline-offset:6px}
+
+/* --- career list: menu panel with a blinking cursor --- */
+.cv-list{position:absolute;right:4.5%;top:12%;width:23%;z-index:7;padding:1.4% 1.6% 1.2%;transform:none}
+.cv-list h3{margin:0 0 .6em;font-family:var(--pixel);font-size:13px;letter-spacing:0;text-transform:uppercase;color:var(--ink-soft)}
+.cv-item{display:flex;align-items:center;gap:.5em;width:100%;padding:.42em .3em .42em 1.3em;border:0;border-bottom:var(--px) dotted rgba(43,33,64,.35);background:transparent;cursor:pointer;text-align:left;position:relative;
+  font-family:var(--mono);font-size:24px;line-height:1.1;color:var(--ink)}
+.cv-item:last-child{border-bottom:0}
+.cv-item .nm{flex:1;min-width:0}
+.cv-item .who{font-family:var(--pixel2);font-size:.6em;color:var(--ink-soft);white-space:nowrap}
+.cv-item .ring{display:none}
+.cv-item::before{content:"";position:absolute;left:.15em;top:50%;width:.55em;height:.55em;transform:translateY(-50%);background:var(--ink);opacity:0;
+  clip-path:polygon(0 0,50% 25%,100% 50%,50% 75%,0 100%,0 75%,50% 50%,0 25%)}
+.cv-item.active::before{opacity:1;animation:blink 1s steps(1) infinite}
+.cv-item.active{background:var(--mark)}
+@keyframes blink{50%{opacity:0}}
+.cv-item:hover:not(.active){background:rgba(242,200,75,.35)}
+.cv-item:focus-visible{outline:var(--px) solid var(--ink);outline-offset:-4px}
+
+/* --- start: pixel button --- */
+.cv-start{position:absolute;right:5.5%;bottom:10%;z-index:9;border:var(--px) solid var(--ink);cursor:pointer;background:var(--mark);color:var(--ink);padding:.9em 1.4em .85em;transform:none;
+  font-family:var(--pixel);font-size:20px;line-height:1;box-shadow:calc(var(--px)*2) calc(var(--px)*2) 0 var(--ink);transition:none;
+  clip-path:polygon(var(--px) 0,calc(100% - var(--px)) 0,100% var(--px),100% calc(100% - var(--px)),calc(100% - var(--px)) 100%,var(--px) 100%,0 calc(100% - var(--px)),0 var(--px))}
+.cv-start::after{content:" >";}
+.cv-start:hover{background:#ffd95e}
+.cv-start:active{transform:translate(calc(var(--px)*2),calc(var(--px)*2));box-shadow:0 0 0 var(--ink)}
+.cv-start:focus-visible{outline:var(--px) solid var(--ink);outline-offset:6px}
+.cv-start-note{position:absolute;right:6%;bottom:5%;z-index:9;font-family:var(--mono);font-size:20px;color:var(--ink-soft);transform:none}
+
+.cv-count{position:absolute;left:5.6%;bottom:6%;z-index:8;font-family:var(--pixel2);font-size:15px;color:var(--ink-soft)}
+
+/* ===== Page: What responsibility to land on? (paper fellows piles) ===== */
+.piles-layout{grid-template-columns:1.45fr .6fr}
+.piles-canvas{position:relative;overflow:hidden;background:#f7f6f2;box-shadow:var(--shadow);clip-path:polygon(1% 1%,99% 0,100% 97%,1% 100%,0 4%);
+  background-image:radial-gradient(circle,rgba(42,36,51,.14) 1.1px,transparent 1.5px);background-size:26px 26px}
+.piles-sky{position:absolute;left:24px;top:18px;font-family:"Gloria Hallelujah","Chalkboard SE",cursive;font-size:15px;color:#6b6478;transform:rotate(-1.5deg)}
+.piles-ground{position:absolute;left:0;right:0;bottom:150px;height:3px;background:#2a2433;opacity:.9}
+.pile{position:absolute;bottom:150px;width:10%;height:calc(100% - 190px);border:0;background:transparent;padding:0;cursor:pointer;transform:translateX(-50%);display:block}
+.pile-stack{position:absolute;left:0;right:0;bottom:0;height:100%;display:block;transition:filter .2s}
+.pile .fellow{position:absolute;width:40px;height:40px;transform:translateX(-50%);display:block;animation:fellowFall .85s cubic-bezier(.35,.8,.45,1.18) both;animation-delay:var(--d,0s)}
+.pile .fellow img{position:absolute;left:0;top:0;width:40px;height:40px;image-rendering:auto;display:block}
+.pile .fellow .f1{animation:frameFall .85s steps(1) both;animation-delay:var(--d,0s)}
+.pile .fellow .f2{opacity:0;animation:frameLand .85s steps(1) both;animation-delay:var(--d,0s)}
+@keyframes fellowFall{0%{transform:translate(-50%,-620px);opacity:0}8%{opacity:1}100%{transform:translate(-50%,0)}}
+@keyframes frameFall{0%,88%{opacity:1}100%{opacity:0}}
+@keyframes frameLand{0%,88%{opacity:0}100%{opacity:1}}
+.pile .puff{position:absolute;left:50%;bottom:-6px;width:110px;height:40px;transform:translateX(-50%);display:block;pointer-events:none;opacity:0;animation:puff .5s steps(1) forwards;animation-delay:var(--d,0s)}  /* forwards (not both): invisible until the landing moment */
+.pile .puff img{position:absolute;left:0;bottom:0;width:110px;height:40px;object-fit:contain;image-rendering:pixelated;opacity:0}
+.pile .puff img:nth-child(1){animation:pf1 .5s steps(1) forwards;animation-delay:var(--d,0s)}
+.pile .puff img:nth-child(2){animation:pf2 .5s steps(1) forwards;animation-delay:var(--d,0s)}
+.pile .puff img:nth-child(3){animation:pf3 .5s steps(1) forwards;animation-delay:var(--d,0s)}
+@keyframes puff{0%,95%{opacity:1}100%{opacity:0}}
+@keyframes pf1{0%,33%{opacity:1}34%,100%{opacity:0}}
+@keyframes pf2{0%,33%{opacity:0}34%,66%{opacity:1}67%,100%{opacity:0}}
+@keyframes pf3{0%,66%{opacity:0}67%,99%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.pile .fellow,.pile .fellow img,.pile .puff,.pile .puff img{animation:none}.pile .fellow .f1{opacity:0}.pile .fellow .f2{opacity:1}.pile .puff{display:none}}
+.piles-ground{position:absolute;left:0;right:0;bottom:0;height:150px;background:#f6ead9;border-top:4px solid #a89bb8;opacity:1}
+.pile-label{position:absolute;left:50%;bottom:-66px;transform:translateX(-50%) rotate(-2deg);width:112px;font-family:"Gloria Hallelujah","Chalkboard SE",cursive;font-size:12.5px;line-height:1.15;color:#2a2433;text-align:center;display:block}
+.pile-label small{display:block;font-family:"Trebuchet MS",Arial,sans-serif;font-size:11px;color:#6b6478;margin-top:2px}
+.pile:nth-child(even) .pile-label{transform:translateX(-50%) rotate(1.5deg)}
+.pile:not(.active) .pile-stack{filter:saturate(.55) opacity(.72)}
+.pile:hover .pile-stack{filter:none}
+.pile.active .pile-label{background:var(--yellow,#f2c84b);padding:2px 4px;clip-path:polygon(2% 8%,98% 0,100% 92%,3% 100%)}
+.pile:focus-visible{outline:2px dashed #2a2433;outline-offset:4px}
+.pile-legend{margin:2px 0 6px;font-size:12px;color:#6b6478;border-top:1px dashed #c7b8d1;padding-top:8px}
+
+/* ===== Global pixel UI: buttons, pager, badges (loaded after styles.css) ===== */
+:root{--px:4px;--pxink:#2b2140;--pxmark:#f2c84b;--pxpanel:#fff;--pxfont:"Press Start 2P","Silkscreen",monospace;--pxfont2:"Silkscreen","Press Start 2P",monospace;--pxmono:"VT323","Courier New",monospace}
+.pxbox,.nav-btn,.pager,.view-toggle button,.panel-tabs button,.family-switch button,.level-chips button,.career-vertical button,.compare-buttons button,[data-map-mode],[data-future-view],[data-remote-view],[data-waterfall],[data-compare],[data-tree-family],[data-level],[data-bench],.page-count,.guide-badge{
+  border:var(--px) solid var(--pxink)!important;border-radius:0!important;background:var(--pxpanel);color:var(--pxink);box-shadow:var(--px) var(--px) 0 var(--pxink)!important;filter:none!important;
+  clip-path:polygon(var(--px) 0,calc(100% - var(--px)) 0,100% var(--px),100% calc(100% - var(--px)),calc(100% - var(--px)) 100%,var(--px) 100%,0 calc(100% - var(--px)),0 var(--px))!important;
+  transition:none!important;transform:none!important}
+.nav-btn,.pager{font-family:var(--pxfont)!important;font-size:12px!important;font-weight:400!important;padding:14px 18px!important;line-height:1!important}
+.nav-btn.next{background:var(--pxmark)!important;color:var(--pxink)!important}
+.nav-btn:hover:not(:disabled){background:#ffd95e}
+.nav-btn:active:not(:disabled){transform:translate(var(--px),var(--px))!important;box-shadow:0 0 0 var(--pxink)!important}
+.nav-btn:disabled{opacity:.3}
+.pager i{width:8px;height:8px;border:2px solid var(--pxink);border-radius:0;display:block}
+.pager i.active{background:var(--pxink)}
+.page-count{font-family:var(--pxfont)!important;font-size:12px!important;padding:12px 14px!important;transform:none!important}
+.view-toggle button,.panel-tabs button,.family-switch button,.level-chips button,.career-vertical button,.compare-buttons button,[data-map-mode],[data-future-view],[data-remote-view],[data-waterfall],[data-compare],[data-tree-family],[data-level],[data-bench]{
+  font-family:var(--pxfont2)!important;font-size:12px!important;font-weight:700!important;padding:8px 11px!important;cursor:pointer;line-height:1.1!important}
+.view-toggle button.active,.panel-tabs button.active,.family-switch button.active,.level-chips button.active,.career-vertical button.active,.compare-buttons button.active,[data-map-mode].active,[data-future-view].active,[data-remote-view].active,[data-waterfall].active,[data-compare].active,[data-tree-family].active,[data-level].active{
+  background:var(--pxmark)!important;color:var(--pxink)!important;outline:0!important}
+.view-toggle button:hover,.family-switch button:hover,.career-vertical button:hover,.compare-buttons button:hover,.panel-tabs button:hover{background:rgba(242,200,75,.35)}
+button:focus-visible{outline:var(--px) solid var(--pxink);outline-offset:3px}
+/* pixel portraits wherever avatars appear */
+.fellow-card img,.guide-badge img,.intro-portrait img,.future-guide img,.cover-fellow img{image-rendering:pixelated;object-fit:contain!important;background:#f7f6f2!important}
+.guide-badge img{border:var(--px) solid var(--pxink)!important;width:72px!important;height:56px!important}
+.fellow-card{border:var(--px) solid var(--pxink)!important;box-shadow:var(--px) var(--px) 0 var(--pxink)!important;clip-path:none!important;transform:none!important;transition:none!important}
+.fellow-card:hover,.fellow-card.selected{box-shadow:calc(var(--px)*2) calc(var(--px)*2) 0 var(--pxink)!important;transform:translate(calc(var(--px)*-1),calc(var(--px)*-1))!important}
+.fellow-card::before{display:none!important}
+.fellow-card img{height:60%!important;filter:none!important;padding:6px}
+.piles-layout{height:100%;min-height:0;grid-template-rows:minmax(0,1fr)}
+.piles-layout .piles-canvas{min-height:0}
+.piles-layout .tree-info{min-height:0;overflow:auto;padding-bottom:70px}
+.family-switch button{font-size:10px!important;padding:7px 8px!important}
+
+/* ===== piles page: stripped-down pixel layout ===== */
+.piles-page{padding:28px 44px 24px;background:#f7f6f2}
+.piles-page::before,.piles-page::after{display:none!important}
+.piles-page .content::before,.piles-page .content::after{display:none}
+.px-title{margin:0 0 14px;font-family:var(--pxfont);font-size:24px;line-height:1.5;color:var(--pxink);display:inline-block;padding:14px 18px;background:#fff;border:var(--px) solid var(--pxink);box-shadow:var(--px) var(--px) 0 var(--pxink)}
+.piles-page .piles-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:26px;height:calc(100% - 150px);min-height:0}
+.piles-page .piles-canvas{box-shadow:none;clip-path:none;border:var(--px) solid var(--pxink);background:#fff;background-image:radial-gradient(circle,rgba(43,33,64,.13) 1px,transparent 1.2px);background-size:24px 24px}
+.px-side{align-self:start;background:#fff;border:var(--px) solid var(--pxink);box-shadow:var(--px) var(--px) 0 var(--pxink);padding:18px 18px 16px;display:flex;flex-direction:column;gap:10px}
+.px-side-title{font-family:var(--pxfont);font-size:13px;line-height:1.5;color:var(--pxink);padding-bottom:10px;border-bottom:var(--px) dotted rgba(43,33,64,.35)}
+.px-side h3{margin:4px 0 0;font-family:var(--pxfont2);font-size:11px;letter-spacing:.02em;text-transform:uppercase;color:#6b6478}
+.px-side .role-skills span{font-family:var(--pxmono)!important;font-size:18px!important;background:#fff!important;border:3px solid var(--pxink);border-left-width:3px!important;padding:3px 8px!important}
+.px-side .family-switch{gap:6px}
+.px-side .role-intro{margin:0;font-family:var(--pxmono);font-size:17px;line-height:1.15;color:var(--pxink)}
+.piles-page .piles-ground{bottom:0;height:var(--ground,120px)}
+.piles-page .pile{bottom:var(--ground,120px);height:calc(100% - var(--ground,120px) - 12px);width:8.6%}  /* slots are 9.7% apart: leaves a clear gap between piles and labels */
+.piles-page .pile-label{font-family:var(--pxmono);font-size:13.5px;line-height:1.05;transform:translateX(-50%);width:100%;bottom:auto;top:calc(100% + 12px);overflow-wrap:break-word}
+.piles-page .pile:nth-child(even) .pile-label{transform:translateX(-50%)}
+.piles-page .pile-label small{font-family:var(--pxfont2);font-size:9px;margin-top:4px}
+.piles-page .pile.active .pile-label{clip-path:none;background:var(--pxmark);border:3px solid var(--pxink);padding:4px 2px}
+
+/* ===== place page: map + falling fellows + pie ===== */
+.place-canvas{position:relative;border:var(--px) solid var(--pxink);background:#fff;background-image:radial-gradient(circle,rgba(43,33,64,.13) 1px,transparent 1.2px);background-size:24px 24px;overflow:hidden;min-height:0;display:grid;place-items:center;padding:28px 36px 56px}
+.place-map{width:100%;height:100%;max-height:100%;shape-rendering:crispEdges}
+.place-map .map-state{stroke:#2b2140!important;stroke-width:.7;stroke-linejoin:round;cursor:pointer;transition:fill .35s steps(3),stroke-width .1s;fill:#ececea!important}
+.place-map .map-state.lit,.place-map.all-lit .map-state{fill:var(--c)!important}
+.place-map .map-state:hover{stroke-width:1.6}
+.place-map .map-state.selected{stroke:#2b2140!important;stroke-width:1.6!important;filter:none!important}
+.place-map .sel-overlay{fill:url(#selHatch);stroke:#2b2140;stroke-width:1.6;pointer-events:none}
+.place-legend{position:absolute;left:18px;bottom:14px;display:flex;align-items:center;gap:4px;font-family:var(--pxmono);font-size:15px;color:#6b6478}
+.place-legend i{width:18px;height:12px;border:2px solid var(--pxink);display:block}
+.place-legend span{margin:0 6px}
+.place-note{position:absolute;right:18px;bottom:12px;max-width:46%;font-family:var(--pxmono);font-size:12.5px;line-height:1.25;color:#6b6478;text-align:right}
+.place-fellows{position:absolute;inset:28px 36px 56px;pointer-events:none}
+.place-fellows .fellow{position:absolute;width:32px;height:32px;transform:translate(-50%,-100%);animation:placeFall .8s cubic-bezier(.35,.8,.45,1.15) both;animation-delay:var(--d,0s)}
+.place-fellows .fellow img{position:absolute;left:0;top:0;width:32px;height:32px;display:block}
+.place-fellows .fellow .f1{animation:frameFall .8s steps(1) both;animation-delay:var(--d,0s)}
+.place-fellows .fellow .f2{opacity:0;animation:placeLandFade 1.3s steps(1) both;animation-delay:var(--d,0s)}
+.place-fellows .fellow .pf{opacity:0;width:56px;height:20px;left:-12px;top:24px;object-fit:contain;animation:placePuff 1.3s steps(1) both;animation-delay:var(--d,0s)}
+@keyframes placeFall{0%{transform:translate(-50%,-620px);opacity:0}6%{opacity:1}100%{transform:translate(-50%,-100%)}}
+@keyframes placeLandFade{0%,54%{opacity:0}55%,80%{opacity:1}81%,100%{opacity:0}}
+@keyframes placePuff{0%,56%{opacity:0}57%,72%{opacity:1}73%,100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.place-fellows{display:none}.place-map .map-state{fill:unset!important}}
+.place-pie{width:100%;max-width:168px;margin:0 auto;display:block;overflow:visible}
+.pie-legend{display:flex;flex-direction:column;gap:1px;border-top:var(--px) dotted rgba(43,33,64,.35);padding-top:6px}
+.pie-row{display:grid;grid-template-columns:14px 1fr auto;align-items:center;gap:8px;font-family:var(--pxmono);font-size:14px;line-height:1.05;color:#6b6478;padding:1px 4px}
+.pie-row i{width:14px;height:14px;border:2px solid var(--pxink);display:block}
+.pie-row b{font-weight:400;color:var(--pxink)}
+.pie-row.sel{background:var(--pxmark,#f2c84b);color:var(--pxink)}
+.pie-sel{filter:none}
+.place-stat{font-family:var(--pxmono);font-size:19px;line-height:1.2;color:var(--pxink)}
+.place-stat.small{font-size:16px;color:#6b6478}
+
+.place-right{display:flex;flex-direction:column;gap:12px;min-height:0;justify-content:space-between}
+.place-page #placeInfo{gap:7px;padding:14px 16px 12px}
+.place-page .place-stat{font-size:17px}
+.place-page .place-stat.small{font-size:14.5px}
+.px-mini{padding:12px 12px 10px;gap:8px}
+.px-mini h3{margin:0}
+.px-mini .family-switch button{font-size:8.5px!important;padding:4px 6px!important}
+[data-place-family].active{background:var(--pxmark)!important}
+
+/* ===== salary coin game ===== */
+.game-canvas{position:relative;border:var(--px) solid var(--ink);background:#fff;background-image:radial-gradient(circle,rgba(43,33,64,.13) 1px,transparent 1.2px);background-size:24px 24px;overflow:hidden;min-height:0}
+.game-ground{position:absolute;left:0;right:0;bottom:0;height:120px;background:#f6ead9;border-top:4px solid #a89bb8}
+.game-hero{position:absolute;left:0;top:0;width:64px;height:64px;will-change:transform}
+.game-hero img{width:64px;height:64px;display:block;image-rendering:auto}
+.game-coin{position:absolute;width:56px;height:56px;transform:translate(-50%,-50%);filter:drop-shadow(0 4px 0 rgba(43,33,64,.2))}
+.game-coin img{width:56px;height:56px;display:block}
+.game-spark{position:absolute;width:96px;height:96px;transform:translate(-50%,-50%);pointer-events:none}
+.game-spark img{width:96px;height:96px;display:block}
+.game-canvas.frozen>:not(.game-modal){filter:blur(3px) saturate(.6);transition:filter .25s steps(3)}
+.game-modal{position:absolute;inset:0;display:grid;place-items:center;background:rgba(247,246,242,.55);z-index:5}
+.game-box{background:#fff;border:var(--px) solid var(--ink);box-shadow:calc(var(--px)*2) calc(var(--px)*2) 0 var(--ink);padding:28px 30px;width:520px;display:flex;flex-direction:column;gap:18px;animation:boxIn .25s steps(4) both}
+@keyframes boxIn{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+.game-q{font-family:var(--pxfont);font-size:15px;line-height:1.6}
+.game-input{display:flex;align-items:center;gap:10px;border:var(--px) solid var(--ink);padding:8px 14px;font-family:var(--pxmono);font-size:40px}
+.game-input input{flex:1;min-width:0;border:0;outline:0;font:inherit;background:transparent;color:var(--ink)}
+.game-input input.bad{animation:shake .3s steps(4)}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.game-presets{display:flex;gap:8px;flex-wrap:wrap}
+.game-presets button{font-family:var(--pxfont2);font-size:11px;font-weight:700;border:3px solid var(--ink);background:#fff;box-shadow:3px 3px 0 var(--ink);padding:7px 9px;cursor:pointer}
+.game-presets button:hover{background:rgba(242,200,75,.4)}
+.game-go{align-self:flex-end;font-family:var(--pxfont);font-size:12px;background:var(--mark);border:var(--px) solid var(--ink);box-shadow:var(--px) var(--px) 0 var(--ink);padding:14px 18px;cursor:pointer}
+.game-go:active{transform:translate(var(--px),var(--px));box-shadow:none}
+.game-big{font-family:var(--pxfont);font-size:30px;line-height:1.2}
+.game-stat{font-family:var(--pxmono);font-size:20px;line-height:1.2}.game-stat.small{font-size:16px;color:#6b6478}
+.game-stat kbd{font:inherit;border:2px solid var(--ink);padding:0 .3em;box-shadow:2px 2px 0 var(--ink)}
+.px-btn{font-family:var(--pxfont2);font-size:10px;font-weight:700;border:3px solid var(--ink);background:#fff;box-shadow:3px 3px 0 var(--ink);padding:6px 8px;cursor:pointer;margin-top:6px}
+.game-modal[hidden],.game-spark[hidden],.game-coin[hidden]{display:none!important}
+.game-hero,.game-hero img{width:96px;height:96px}
+
+/* ===== salary mountains ===== */
+.ridge-canvas{position:relative;border:var(--px) solid var(--ink);background:#fff;background-image:radial-gradient(circle,rgba(43,33,64,.13) 1px,transparent 1.2px);background-size:24px 24px;overflow:hidden;min-height:0;display:grid;place-items:center;padding:10px}
+.ridge-canvas svg{width:100%;height:100%;max-height:100%}
+.ridge-canvas text{font-family:var(--pxmono);font-size:18px;fill:var(--ink)}
+.ridge-canvas text.lbl{font-family:var(--pxfont2);font-size:11px;fill:#6b6478}
+.ridge{fill:rgba(228,225,232,.55);stroke:#2b2140;stroke-width:2;transition:fill .3s steps(3);cursor:pointer}
+.ridge.hov{fill:color-mix(in srgb,var(--c) 55%,#fff)}
+.ridge.lit{fill:var(--c);stroke-width:3}
+.ridge-hero{image-rendering:auto}
+.ridge-tag{font-family:var(--pxfont)!important;font-size:14px!important}
+.ridge-canvas svg.all-lit .ridge{fill:color-mix(in srgb,var(--c) 70%,transparent)}
+
+.ridge-dragger{cursor:ew-resize}
+.ridge-knob{cursor:ew-resize}
+.ridge-banner{position:absolute;right:28px;top:24px;background:#d9343b;color:#fff;border:var(--px) solid var(--ink);box-shadow:calc(var(--px)*2) calc(var(--px)*2) 0 var(--ink);padding:16px 22px 18px;text-align:center;min-width:260px;animation:bannerIn .35s steps(5) both;z-index:4}
+.ridge-banner[hidden]{display:none!important}
+@keyframes bannerIn{0%{transform:scale(.2) rotate(-8deg);opacity:0}60%{transform:scale(1.12) rotate(2deg);opacity:1}100%{transform:none}}
+.rb-top{font-family:var(--pxfont2);font-size:11px;letter-spacing:.1em;color:#ffe08a;margin-bottom:8px}
+.rb-sal{font-family:var(--pxfont);font-size:26px;line-height:1.2;color:#ffe08a;text-shadow:3px 3px 0 var(--ink)}
+.rb-line{font-family:var(--pxfont2);font-size:12px;letter-spacing:.06em;margin-top:8px}
+.rb-pct{font-family:var(--pxfont);font-size:40px;line-height:1.1;text-shadow:4px 4px 0 var(--ink);margin-top:4px}
+
+/* page 4: full-width game, controls float around the fellow */
+.game-page .piles-layout.game-layout{grid-template-columns:minmax(0,1fr)}
+.game-hints{position:absolute;left:0;top:0;width:96px;height:96px;pointer-events:none;z-index:3}
+.gh{position:absolute;font-family:var(--pxmono);font-size:22px;line-height:1;color:var(--pxink);white-space:nowrap;opacity:0;transition:opacity .6s ease;pointer-events:none}
+.gh kbd{font:inherit;display:inline-block;min-width:1.2em;text-align:center;background:#fff;border:3px solid var(--pxink);box-shadow:3px 3px 0 var(--pxink);padding:2px 6px;margin:0 2px}
+.gh-up{left:50%;bottom:calc(100% + 18px);transform:translateX(-50%)}
+.gh-left{right:calc(100% + 14px);top:50%;transform:translateY(-50%)}
+.gh-right{left:calc(100% + 14px);top:50%;transform:translateY(-50%)}
+.gh-coin{transform:translate(-50%,-50%);z-index:3;font-size:20px;color:#6b6478}
+.game-hints.show .gh,.gh-coin.show{opacity:1}
+.game-hints.show .gh-up{transition-delay:.15s}.game-hints.show .gh-right{transition-delay:.3s}.gh-coin.show{transition-delay:.45s}
+.game-hints.gone .gh,.gh-coin.gone{opacity:0;transition:opacity .25s ease;transition-delay:0s}
+
+/* ===== page 5: salary mountains in rows (ridgeline) ===== */
+.rrow{cursor:pointer}
+.rrow .rfill{fill:color-mix(in srgb,var(--c) 40%,#fff);stroke:none;transition:fill .5s}
+.rrow .rbase{stroke:#2b2140;stroke-width:2;opacity:.35}
+.rrow .rname{font-family:var(--pxmono);font-size:20px;fill:#6b6478}
+.rrow .rmed{fill:var(--cd);stroke:#2b2140;stroke-width:1}
+.rrow .rmedlbl{display:none;font-family:var(--pxmono);font-size:16px;fill:#2b2140}
+.rrow .rpct{font-family:var(--pxfont2);font-size:12px;fill:#8a8396}
+.rrow.hov .rfill{fill:color-mix(in srgb,var(--c) 85%,#fff)!important}
+.rrow.hov .rname{fill:#2b2140}
+.rrow.hov .rmedlbl{display:inline}
+.rrow.sel .rfill{fill:var(--c)}
+.rrow.sel .rbase{opacity:1;stroke-width:3}
+.rrow.sel .rname{fill:#2b2140;font-weight:700}
+.rrow.sel .rmedlbl{display:inline}
+.rrow.sel .rpct{fill:#2b2140}
+/* result box now lives in the side panel instead of covering the mountains */
+.ridge-side .ridge-result{background:#d9343b;color:#fff;border:var(--px) solid var(--pxink);box-shadow:calc(var(--px)*2) calc(var(--px)*2) 0 var(--pxink);padding:12px 14px 14px;text-align:center;animation:bannerIn .35s steps(5) both}
+.ridge-side .ridge-result[hidden]{display:none!important}
+.ridge-side .rb-sal{font-size:22px}
+.ridge-side .rb-pct{font-size:32px}
+.ridge-side .rb-line{font-size:11px}
+@media (prefers-reduced-motion:reduce){.ridge-side .ridge-result{animation:none}}
+
+
+/* page 5 mountains: lit left face, shadowed right face, snow caps, haze with distance */
+.rrow .rline{fill:none;stroke:#2b2140;stroke-width:2.2;stroke-linejoin:miter;stroke-miterlimit:8}
+.rrow.sel .rline{stroke-width:3.2}
+.rrow .rshade{fill:#2b2140;opacity:.13}
+.rrow .rsnow{fill:#fff;opacity:.9}
+.rrow[data-slot="1"] .rfill{fill:color-mix(in srgb,var(--c) 72%,#fff)}
+.rrow[data-slot="2"] .rfill{fill:color-mix(in srgb,var(--c) 62%,#fff)}
+.rrow[data-slot="3"] .rfill{fill:color-mix(in srgb,var(--c) 52%,#fff)}
+.rrow[data-slot="4"] .rfill{fill:color-mix(in srgb,var(--c) 44%,#fff)}
+.rrow[data-slot="5"] .rfill{fill:color-mix(in srgb,var(--c) 36%,#fff)}
+.rrow:not(.sel) .rline{stroke:color-mix(in srgb,#2b2140 75%,#fff)}
+.rrow:not(.sel) .rshade{opacity:.08}
+/* fixed result box (inside the chart, top-left, above the career names) */
+.ridge-canvas .ridge-banner.rb-fixed{position:static;width:calc(100% - 10px);box-sizing:border-box;min-width:0;padding:10px 10px 12px}
+.ridge-canvas .rb-fixed .rb-sal{font-size:22px}
+.ridge-canvas .rb-fixed .rb-pct{font-size:32px}
+.ridge-canvas .rb-fixed .rb-line{font-size:10px;letter-spacing:0;margin-top:6px}
+.ridge-canvas .rb-fixed .rb-top{margin-bottom:6px}
+
+/* ===== doors page: pay benchmark + alluvial ===== */
+.door-layout{display:grid;grid-template-columns:360px minmax(0,1fr);gap:22px;height:calc(100% - 150px);min-height:0}
+.door-left,.door-right{position:relative;border:var(--px) solid var(--ink);background:#fff;background-image:radial-gradient(circle,rgba(43,33,64,.13) 1px,transparent 1.2px);background-size:24px 24px;overflow:hidden;min-height:0;display:grid;place-items:center;padding:10px}
+.door-svg{width:100%;height:100%;max-height:100%}
+.door-svg text{font-family:var(--pxmono);font-size:16px;fill:var(--pxink)}
+.door-svg text.lbl{font-family:var(--pxfont2);font-size:10px;fill:#6b6478}
+.door-svg text.pf{font-family:var(--pxfont);font-size:10px;fill:var(--pxink)}
+.door-ribbon{fill:var(--c);fill-opacity:.42;stroke:#2b2140;stroke-width:1.2;stroke-opacity:.6;transition:fill-opacity .2s,stroke-width .2s;cursor:pointer}
+.door-ribbon.hi{fill-opacity:.95;stroke-width:3;stroke-opacity:1}
+.door-ribbon.dim{fill-opacity:.12;stroke-opacity:.25}
+.door-face.dim,.door-bar.dim,.door-pay.dim{opacity:.3}
+.door-face.hi text.pf,.door-pay.hi text.pf{fill:#d9343b}
+.door-pay{cursor:pointer;transition:opacity .2s}
+.door-chips{position:absolute;left:14px;bottom:12px;display:flex;gap:6px}
+.door-chips button{font-family:var(--pxfont2)!important;font-size:9px!important;padding:6px 7px!important}
+.door-banner{right:auto;left:50%;top:auto;bottom:50px;transform:translateX(-50%);min-width:0;padding:10px 16px}
+.door-banner .rb-top{margin-bottom:4px}
+.door-banner[hidden]{display:none!important}
+
+/* ===== galaxy page ===== */
+.gal-layout{grid-template-columns:minmax(0,1fr) 330px}
+.gal-canvas{position:relative;border:var(--px) solid var(--ink);background:#fff;background-image:radial-gradient(circle,rgba(43,33,64,.13) 1px,transparent 1.2px);background-size:24px 24px;overflow:hidden;min-height:0;display:grid;place-items:center;padding:10px}
+.gal-svg{width:100%;height:100%;max-height:100%}
+.gal-svg text{font-family:var(--pxmono);font-size:16px;fill:var(--pxink)}
+.gal-svg text.lbl{font-family:var(--pxfont2);font-size:10px;fill:#6b6478}
+.gal-svg .gal-lab{font-family:var(--pxfont2);font-size:12px;paint-order:stroke;stroke:#fff;stroke-width:3px;pointer-events:none}
+.gal-svg .gal-num{font-family:var(--pxfont2);font-size:10px;pointer-events:none}
+.gal-b circle{stroke:#2b2140;stroke-width:2.5;opacity:.92;cursor:pointer;transition:opacity .2s,stroke-width .15s}
+.gal-b.hi circle{stroke-width:4;opacity:1}
+.gal-b.dim circle{opacity:.15}
+.gal-lab.dim,.gal-num.dim{opacity:.15}.gal-lab.hi{fill:#d9343b}
+.gal-link{stroke:#2b2140;stroke-width:1.5;stroke-dasharray:3 4;opacity:.3;transition:opacity .2s}
+.gal-link.hi{opacity:1;stroke:#d9343b;stroke-width:2.5}.gal-link.dim{opacity:.05}
+.gal-chips{left:auto;right:14px;bottom:12px}
+.gal-banner{right:auto;left:50%;top:14px;bottom:auto;transform:translateX(-50%);min-width:0;padding:8px 14px}
+.gal-banner .rb-top{margin-bottom:4px}
+.gal-list{display:flex;flex-direction:column;gap:2px;max-height:430px;overflow:auto}
+.gal-row{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;border:0;border-left:8px solid transparent;background:transparent;padding:5px 6px;font-family:var(--pxmono);font-size:17px;line-height:1.1;color:var(--pxink);text-align:left;cursor:pointer;border-bottom:2px dotted rgba(43,33,64,.3)}
+.gal-row i{display:inline-block;width:11px;height:11px;border:2px solid #2b2140;margin-left:2px}
+button.gal-row:hover{background:rgba(242,200,75,.35)}
+.door-chip-lbl{font-family:var(--pxfont2);font-size:9px;color:#6b6478;align-self:center;margin:0 2px 0 6px}
+.door-chips{flex-wrap:wrap;max-width:70%}
+
+.gal-tip{position:absolute;z-index:6;pointer-events:none;width:300px;background:#fff;border:var(--px) solid var(--ink);box-shadow:var(--px) var(--px) 0 var(--ink);padding:10px 12px;font-family:var(--pxmono);font-size:17px;line-height:1.25;color:var(--pxink)}
+.gal-tip[hidden]{display:none!important}
+.gt-name{font-family:var(--pxfont);font-size:12px;line-height:1.5;border-left:8px solid var(--mark);padding-left:8px;margin-bottom:6px}
+.gt-row{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}.gt-row span{color:#6b6478;min-width:92px;font-family:var(--pxfont2);font-size:9px;text-transform:uppercase}.gt-row small{color:#6b6478;font-size:14px}
+
+.gal-trails{pointer-events:none}
+.gal-svg .gal-yr{font-family:var(--pxfont2);font-size:10px;fill:#2b2140;paint-order:stroke;stroke:#fff;stroke-width:3px}
+.gal-play{background:var(--mark)!important}
+.px-side .game-stat.small span{display:block;white-space:normal!important;font-size:14px;line-height:1.25;margin:2px 0}
+.gal-svg .gal-yearbig{font-family:var(--pxfont);font-size:34px;fill:rgba(43,33,64,.18)}
+
+/* ===== race page: who reaches 2035 first ===== */
+.race-layout{--name-w:220px;position:relative;box-sizing:border-box;height:calc(100% - 150px);min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:10px;padding:12px 18px 10px;border:var(--px) solid var(--ink);background:#fff;background-image:radial-gradient(circle,rgba(43,33,64,.13) 1px,transparent 1.2px);background-size:24px 24px}
+.race-head{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:84px}
+.race-msg{flex:1;min-width:0;display:flex;align-items:center}
+.race-prompt{font-family:var(--pxfont);font-size:12px;line-height:1.9;color:var(--pxink)}
+.race-prompt b{font-weight:400;background:var(--pxmark);padding:3px 7px;border:3px solid var(--pxink)}
+.race-banner{background:#d9343b;color:#fff;border:var(--px) solid var(--ink);box-shadow:calc(var(--px)*2) calc(var(--px)*2) 0 var(--ink);padding:8px 16px 10px;animation:bannerIn .35s steps(5) both}
+.race-banner .rb-top{margin-bottom:4px}
+.race-banner .rb-line{margin-top:3px;font-size:12px;text-transform:uppercase}
+.race-go{font-family:var(--pxfont);font-size:12px;line-height:1;padding:16px 18px;background:var(--pxmark)!important;color:var(--pxink);cursor:pointer;white-space:nowrap}
+.race-go:hover:not(:disabled){background:#ffd95e!important}
+.race-go:disabled{opacity:.35;cursor:default}
+.race-lanes{position:relative;display:grid;grid-template-rows:repeat(6,minmax(0,1fr));min-height:0;border-top:3px solid #a89bb8}
+.race-lane{all:unset;box-sizing:border-box;display:grid;grid-template-columns:var(--name-w) minmax(0,1fr);min-height:0;border-bottom:3px dashed #cfc3dc;cursor:pointer}
+.race-lane:nth-child(odd) .rl-track{background:#f6ead9}
+.race-lane:nth-child(even) .rl-track{background:#f1e2cc}
+.race-lane:not(.locked):hover .rl-name{background:rgba(242,200,75,.35)}
+.race-lane:focus-visible{outline:var(--px) solid var(--pxink);outline-offset:-4px}
+.race-lane.locked{cursor:default}
+.rl-name{display:grid;grid-template-columns:18px 1fr;column-gap:10px;align-content:center;padding:0 12px;transition:background .15s steps(2)}
+.rl-name i{grid-row:1/4;align-self:center;width:18px;height:18px;box-sizing:border-box;background:var(--c);border:3px solid var(--pxink)}
+.rl-name b{font-family:var(--pxfont);font-size:13px;line-height:1.35;font-weight:400;color:var(--pxink)}
+.rl-name small{font-family:var(--pxfont2);font-size:10px;color:#6b6478;margin-top:4px}
+.rl-bet{display:none;justify-self:start;margin-top:5px;font-style:normal;font-family:var(--pxfont2);font-size:9px;font-weight:700;background:var(--pxink);color:#fff;padding:2px 5px}
+.race-lane.bet .rl-name{background:var(--pxmark)!important}
+.race-lane.bet .rl-bet{display:block}
+.rl-track{position:relative;border-left:4px dashed var(--pxink)}
+.rl-track::after{content:"";position:absolute;right:0;top:0;bottom:0;width:16px;background:repeating-conic-gradient(var(--pxink) 0 25%,#fff 0 50%) 0 0/16px 16px}
+.race-lane.winner .rl-track{box-shadow:inset 0 0 0 3px #d9343b}
+.rl-runner{position:absolute;left:4px;top:50%;width:72px;height:72px;margin-top:-36px;will-change:transform;z-index:2}
+.rl-runner img{width:72px;height:72px;display:block}
+.rl-val{position:absolute;top:50%;transform:translateY(-50%);z-index:3;white-space:nowrap;font-family:var(--pxfont2);font-size:13px;font-weight:700;text-transform:uppercase;color:var(--pxink);background:#fff;border:3px solid var(--pxink);padding:4px 8px;opacity:0;transition:opacity .2s steps(3)}
+.rl-val.show{opacity:1}
+.rl-val b{color:#d9343b;margin-right:6px}
+.race-count{position:absolute;inset:0;z-index:5;display:grid;place-items:center;pointer-events:none;font-family:var(--pxfont);font-size:84px;color:var(--pxink);text-shadow:6px 6px 0 var(--pxmark)}
+.race-count.pop{animation:raceCount .45s steps(4) both}
+@keyframes raceCount{0%{transform:scale(1.8);opacity:0}45%,100%{transform:scale(1);opacity:1}}
+.race-foot{display:grid;grid-template-columns:var(--name-w) minmax(0,1fr)}
+.race-foot>div{grid-column:2;display:flex;justify-content:space-between;align-items:center;gap:12px;font-family:var(--pxfont);font-size:11px;color:var(--pxink)}
+.race-rule{font-family:var(--pxfont2);font-size:12px;font-weight:700;color:var(--pxink);padding:2px 6px}
+.race-rule.flash{animation:ruleFlash .9s steps(6)}
+@keyframes ruleFlash{0%,50%{background:var(--pxmark);color:var(--pxink)}100%{background:transparent}}
+.race-intro{display:flex;flex-direction:column;gap:8px}
+.race-sub{font-family:var(--pxmono);font-size:22px;line-height:1.05;color:#4a4060;max-width:1000px}
+.race-round{display:inline-block;margin-right:12px;padding:4px 8px;background:var(--pxink);color:#fff;font-size:10px;line-height:1.4;vertical-align:1px}
+.race-round.newjobs{background:#d9343b}
+.race-count.lose{text-shadow:6px 6px 0 #d9343b}
+/* door page: fixed view, note where the metric chips used to be */
+.door-note{position:absolute;left:14px;bottom:10px;max-width:47%;font-family:var(--pxmono);font-size:15px;line-height:1.05;color:#6b6478}
+/* page 2: scale note — every career is 100 fellows */
+.piles-note{position:absolute;right:14px;top:12px;z-index:3;pointer-events:none;text-align:right;font-family:var(--pxfont2);font-size:10px;line-height:1.7;color:#6b6478}
+/* door page entrance: boxes start empty; fellows run in (runDoorFellows), then labels → bars → ribbons → left chart fade in */
+.door-page .door-txt,.door-page .door-head,.door-page .door-bars,.door-page .door-ribbons,.door-page .door-left .door-svg,.door-page .door-note{transition:opacity .6s steps(6)}
+.door-page .door-bars{transition-delay:.15s}
+.door-page .door-ribbons{transition-delay:.35s}
+.door-page .door-left .door-svg{transition-delay:.55s}
+.door-page .door-note{transition-delay:.75s}
+.door-page.door-intro .door-txt,.door-page.door-intro .door-head,.door-page.door-intro .door-bars,.door-page.door-intro .door-ribbons,.door-page.door-intro .door-left .door-svg,.door-page.door-intro .door-note{opacity:0;transition:none}
+.door-page.door-intro .door-fellow{visibility:hidden}
+/* no hover (and no native <title> tooltips) on either chart until the entrance has finished — removed by bindDoors */
+.door-page.door-locked .door-svg{pointer-events:none}
+/* door page: PLOT TWIST banner on one line in the strip between Back and Next, so it never covers the charts */
+.door-page .door-banner{left:0;right:0;margin:0 auto;width:max-content;top:auto;bottom:22px;transform:none;display:flex;align-items:center;gap:16px;padding:10px 18px;min-width:0;white-space:nowrap;z-index:25}
+.door-page .door-banner .rb-top{margin:0}
+.door-page .door-banner .rb-line{margin:0;font-family:var(--pxfont);font-size:12px;letter-spacing:0}
+.door-face{cursor:pointer}
+/* race page: the betting question is the page's task, so it is larger than the other prompts */
+.race-ask{font-size:16px;line-height:1.5}

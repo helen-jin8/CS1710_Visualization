@@ -1,0 +1,437 @@
+{
+ "2024": {
+  "Data Science & Analytics": {
+   "n": 14828,
+   "bySize": {
+    "S": {
+     "n": 0,
+     "median": null
+    },
+    "M": {
+     "n": 14514,
+     "median": 133000
+    },
+    "L": {
+     "n": 314,
+     "median": 143150
+    }
+   },
+   "employmentType": {
+    "FT": 14728,
+    "CT": 40,
+    "PT": 60
+   },
+   "byRemote": {
+    "0": {
+     "n": 11521,
+     "median": 135000
+    },
+    "50": {
+     "n": 3,
+     "median": 85000
+    },
+    "100": {
+     "n": 3304,
+     "median": 126900
+    }
+   }
+  },
+  "AI & Machine Learning": {
+   "n": 9809,
+   "bySize": {
+    "S": {
+     "n": 6,
+     "median": 164615
+    },
+    "M": {
+     "n": 9217,
+     "median": 178500
+    },
+    "L": {
+     "n": 586,
+     "median": 187100
+    }
+   },
+   "employmentType": {
+    "FT": 9795,
+    "PT": 10,
+    "CT": 4
+   },
+   "byRemote": {
+    "0": {
+     "n": 8090,
+     "median": 184300
+    },
+    "50": {
+     "n": 1,
+     "median": 120000
+    },
+    "100": {
+     "n": 1718,
+     "median": 160000
+    }
+   }
+  },
+  "Data Engineering & Architecture": {
+   "n": 8216,
+   "bySize": {
+    "S": {
+     "n": 0,
+     "median": null
+    },
+    "M": {
+     "n": 8062,
+     "median": 147000
+    },
+    "L": {
+     "n": 154,
+     "median": 139100
+    }
+   },
+   "employmentType": {
+    "FT": 8182,
+    "PT": 10,
+    "CT": 24
+   },
+   "byRemote": {
+    "0": {
+     "n": 6312,
+     "median": 148000
+    },
+    "50": {
+     "n": 0,
+     "median": null
+    },
+    "100": {
+     "n": 1904,
+     "median": 145000
+    }
+   }
+  },
+  "Software Engineering": {
+   "n": 8226,
+   "bySize": {
+    "S": {
+     "n": 0,
+     "median": null
+    },
+    "M": {
+     "n": 8120,
+     "median": 180000
+    },
+    "L": {
+     "n": 106,
+     "median": 151300
+    }
+   },
+   "employmentType": {
+    "FT": 8214,
+    "PT": 8,
+    "CT": 4
+   },
+   "byRemote": {
+    "0": {
+     "n": 7046,
+     "median": 180000
+    },
+    "50": {
+     "n": 0,
+     "median": null
+    },
+    "100": {
+     "n": 1180,
+     "median": 180000
+    }
+   }
+  },
+  "Systems, Cloud & Security": {
+   "n": 1709,
+   "bySize": {
+    "S": {
+     "n": 0,
+     "median": null
+    },
+    "M": {
+     "n": 1653,
+     "median": 165000
+    },
+    "L": {
+     "n": 56,
+     "median": 140750
+    }
+   },
+   "employmentType": {
+    "FT": 1706,
+    "CT": 1,
+    "PT": 2
+   },
+   "byRemote": {
+    "0": {
+     "n": 1343,
+     "median": 165300
+    },
+    "50": {
+     "n": 0,
+     "median": null
+    },
+    "100": {
+     "n": 366,
+     "median": 165000
+    }
+   }
+  },
+  "Data & Technology Management": {
+   "n": 2492,
+   "bySize": {
+    "S": {
+     "n": 0,
+     "median": null
+    },
+    "M": {
+     "n": 2458,
+     "median": 150000
+    },
+    "L": {
+     "n": 34,
+     "median": 186050
+    }
+   },
+   "employmentType": {
+    "FT": 2482,
+    "PT": 8,
+    "CT": 2
+   },
+   "byRemote": {
+    "0": {
+     "n": 2060,
+     "median": 150850
+    },
+    "50": {
+     "n": 0,
+     "median": null
+    },
+    "100": {
+     "n": 432,
+     "median": 145000
+    }
+   }
+  }
+ },
+ "2025": {
+  "Data Science & Analytics": {
+   "n": 13403,
+   "bySize": {
+    "S": {
+     "n": 0,
+     "median": null
+    },
+    "M": {
+     "n": 13174,
+     "median": 125000
+    },
+    "L": {
+     "n": 229,
+     "median": 143300
+    }
+   },
+   "employmentType": {
+    "FT": 13289,
+    "PT": 54,
+    "CT": 60
+   },
+   "byRemote": {
+    "0": {
+     "n": 10090,
+     "median": 125500
+    },
+    "50": {
+     "n": 0,
+     "median": null
+    },
+    "100": {
+     "n": 3313,
+     "median": 125000
+    }
+   }
+  },
+  "AI & Machine Learning": {
+   "n": 7279,
+   "bySize": {
+    "S": {
+     "n": 0,
+     "median": null
+    },
+    "M": {
+     "n": 6785,
+     "median": 182400
+    },
+    "L": {
+     "n": 494,
+     "median": 183250
+    }
+   },
+   "employmentType": {
+    "FT": 7255,
+    "CT": 8,
+    "PT": 16
+   },
+   "byRemote": {
+    "0": {
+     "n": 5774,
+     "median": 188000
+    },
+    "50": {
+     "n": 1,
+     "median": 133000
+    },
+    "100": {
+     "n": 1504,
+     "median": 170000
+    }
+   }
+  },
+  "Data Engineering & Architecture": {
+   "n": 7887,
+   "bySize": {
+    "S": {
+     "n": 0,
+     "median": null
+    },
+    "M": {
+     "n": 7765,
+     "median": 150000
+    },
+    "L": {
+     "n": 122,
+     "median": 154600
+    }
+   },
+   "employmentType": {
+    "FT": 7829,
+    "CT": 44,
+    "PT": 14
+   },
+   "byRemote": {
+    "0": {
+     "n": 5992,
+     "median": 150000
+    },
+    "50": {
+     "n": 0,
+     "median": null
+    },
+    "100": {
+     "n": 1895,
+     "median": 150000
+    }
+   }
+  },
+  "Software Engineering": {
+   "n": 9777,
+   "bySize": {
+    "S": {
+     "n": 0,
+     "median": null
+    },
+    "M": {
+     "n": 9649,
+     "median": 180000
+    },
+    "L": {
+     "n": 128,
+     "median": 151300
+    }
+   },
+   "employmentType": {
+    "FT": 9723,
+    "PT": 14,
+    "CT": 40
+   },
+   "byRemote": {
+    "0": {
+     "n": 8141,
+     "median": 180000
+    },
+    "50": {
+     "n": 0,
+     "median": null
+    },
+    "100": {
+     "n": 1636,
+     "median": 180000
+    }
+   }
+  },
+  "Systems, Cloud & Security": {
+   "n": 2458,
+   "bySize": {
+    "S": {
+     "n": 0,
+     "median": null
+    },
+    "M": {
+     "n": 2416,
+     "median": 164000
+    },
+    "L": {
+     "n": 42,
+     "median": 164500
+    }
+   },
+   "employmentType": {
+    "FT": 2456,
+    "PT": 2
+   },
+   "byRemote": {
+    "0": {
+     "n": 1848,
+     "median": 164450
+    },
+    "50": {
+     "n": 0,
+     "median": null
+    },
+    "100": {
+     "n": 610,
+     "median": 163748
+    }
+   }
+  },
+  "Data & Technology Management": {
+   "n": 3750,
+   "bySize": {
+    "S": {
+     "n": 0,
+     "median": null
+    },
+    "M": {
+     "n": 3742,
+     "median": 156000
+    },
+    "L": {
+     "n": 8,
+     "median": 197200
+    }
+   },
+   "employmentType": {
+    "FT": 3716,
+    "PT": 24,
+    "CT": 10
+   },
+   "byRemote": {
+    "0": {
+     "n": 2986,
+     "median": 153480
+    },
+    "50": {
+     "n": 0,
+     "median": null
+    },
+    "100": {
+     "n": 764,
+     "median": 163380
+    }
+   }
+  }
+ }
+}

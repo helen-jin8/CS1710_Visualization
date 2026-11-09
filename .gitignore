@@ -1,0 +1,6 @@
+.DS_Store
+_trash/
+_backups/
+*.zip
+*.docx
+node_modules/
