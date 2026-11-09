@@ -22,15 +22,6 @@ Keyboard: ← → switch character on the cover, ← → ↑/space to run and ju
 7. **Which company pays the most, year by year?** — employer "galaxy": each bubble is one employer × job title × year from H-1B filings (position = filings and median offer, size = filings). Pin an employer to see its 2020–25 trail; press ▶ to animate the years.
 8. **Race to 2035: whose jobs grow the most?** — place a bet on a career, then watch six runners race on BLS 2025–35 growth.
 
-## Data
-| File | Source | Notes |
-|---|---|---|
-| `data/story.json` / `story-data.js` | aijobs.net salary survey (U.S. residents, 2024); BLS OEWS May 2025 state employment & wages; BLS Employment Projections 2025–35; BLS OOH industry shares; O*NET skills; BEA regional price parities | Core dataset for pages 1–6, 8–17 |
-| `data/ext-data.js` | DOL OFLC H-1B LCA disclosures (via h1bdata.info), exact job title, filing years 2020–25; O*NET Work Context for 14 SOC occupations | Pages 6–7. See `data/README_EXT.md` |
-| `data/original/salaries.csv` | aijobs.net full export (151k rows) | Used only for employment type / remote ratio |
-
-Caveats worth stating up front: H-1B filings cover foreign-national hiring only and report base salary, so they understate total compensation and omit employers that don't sponsor visas. Salary-survey figures are self-reported. All limitations are also noted on the relevant pages.
-
 ## Tech
 Vanilla JavaScript, hand-written SVG, CSS animations. No framework, no bundler, no runtime dependencies.
 Fonts: Press Start 2P, Silkscreen, VT323 (Google Fonts). Pixel art generated with image-generation tools and hand-cut into sprite frames.
