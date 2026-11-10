@@ -1,37 +1,66 @@
 # U.S. Data Career Explorer
 
-An interactive, game-styled data story about six data & tech career families in the U.S.
-You pick a pixel-art character, "land" on a career, and follow it through real data on job
-titles, geography, salary, employers and ten-year outlook. Built for CS 1710 (Harvard).
+A scroll-free, page-by-page story site about six data/tech career families.
 
-## How to run locally
-Any static server works; no build step.
+## Run
 
-```bash
-python3 -m http.server 8000      # then open http://localhost:8000/
+Double-click `START_SITE.cmd` (Windows) or `START_SITE.sh` (macOS/Linux), or run:
+
 ```
-Keyboard: ← → switch character on the cover, ← → ↑/space to run and jump in the coin game.
+python -m http.server 8000
+```
 
-## The story so far (8 pages)
-1. **Cover** — pick one of six characters: Data Science, AI & ML, Data Engineering, Software Engineering, Systems / Cloud / Security, Data & Tech Management.
-2. **What responsibility to land on?** — characters fall from the sky into piles; pile height = number of people holding each job title in the salary sample.
-3. **What place to land on?** — characters land on a U.S. map; states light up by their share of that career's jobs; click a state for its six-career mix.
-4. **What salary to land on?** — a mini-game: run and jump to catch the coin, then name the salary you want.
-5. **Which mountain do you land on?** — your number is dropped onto the six careers' salary distributions; drag the line to re-score against any career.
-6. **Which door stays open in 2035?** — pay-vs-benchmark panel linked to an alluvial flow from today's hiring demand to BLS projected openings; hover to follow one career across both.
-7. **Which company pays the most, year by year?** — employer "galaxy": each bubble is one employer × job title × year from H-1B filings (position = filings and median offer, size = filings). Pin an employer to see its 2020–25 trail; press ▶ to animate the years.
-8. **Race to 2035: whose jobs grow the most?** — place a bet on a career, then watch six runners race on BLS 2025–35 growth.
+Then open http://localhost:8000/ .
 
-## Tech
-Vanilla JavaScript, hand-written SVG, CSS animations. No framework, no bundler, no runtime dependencies.
-Fonts: Press Start 2P, Silkscreen, VT323 (Google Fonts). Pixel art generated with image-generation tools and hand-cut into sprite frames.
+## Story (current state)
 
-## Project structure
-index.html entry
-app.js all pages, data access, interactions
-cover.js/.css cover page + global pixel UI
-styles.css legacy base styles
-assets/cover six character portraits
-assets/fellows sprite frames (fall/land/run/jump), coin, sparkle
-data/ datasets (see above)
+Page order (the `pages` array in `render()` in `app.js`), 14 pages:
 
+1. Cover
+2. Welcome (the journey ahead: Jobs, Places, Pay, Industries, Levels, 2035, Summary)
+3. What responsibility to land on? (career tree)
+4. What place to land on? (map)
+5. What salary to land on? (salary game)
+6. Which mountain do you land on? (pay quartiles)
+7. Which industry pays the most, year by year? (industry galaxy)
+8. Level up: from Entry to Executive (potion shop, a teaser for page 9)
+9. Where is the pay, and where are the people? (one ring of 100 people by experience level; each block reaches out to its level's median pay)
+10. Race to 2035: which career opens the most doors?
+11. Which door stays open in 2035?
+12. Why do some careers open more doors?
+13. You made it! Unlock your summary
+14. References, data and team (last page: data sources with links, reading notes, team names in `TEAM` in `app.js`)
+
+The old draft pages 14-22 (remote vs. on-site, experience, waterfall, future, Career Passport, references) were removed on 2026-11-09; their code is in `_backups/before-delete-14-22/`.
+
+## Six career families
+
+- Data Science & Analytics: Dot
+- AI & Machine Learning: Nova
+- Data Engineering & Architecture: Pip
+- Software Engineering: Pixel
+- Systems, Cloud & Security: Nimbus
+- Data & Technology Management: Kit
+
+## Folder layout
+
+```
+index.html, app.js, cover.js,      the site itself
+styles.css, cover.css
+START_SITE.cmd / .sh               local server launchers
+spec.docx                          original story specification
+
+assets/cover/                      cover-page character art
+assets/fellows/                    character sprite frames, coins, dust, sparks
+
+data/story-data.js                 main story data (window.__STORY__); story.json is the fetch fallback
+data/ext-data.js                   O*NET, H-1B, company-size extras (see data/README_EXT.md)
+data/oews-industry.js              OEWS by industry, built by data/build_oews_industry.py
+data/*.json, h1b_raw.md            source/intermediate copies of the data above
+data/original/oews/                raw BLS OEWS zips (input to build_oews_industry.py)
+data/original/projections/         raw BLS Employment Projections 2016–26 and 2019–29
+data/original/salaries.csv         raw aijobs.net salary sample
+
+_backups/                          snapshots taken before each edit (before-<change>/)
+_archive/                          files no longer used by the site (old v15 PNGs, old READMEs/QA notes)
+```

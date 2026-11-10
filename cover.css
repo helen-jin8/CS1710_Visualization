@@ -196,8 +196,8 @@ button:focus-visible{outline:var(--px) solid var(--pxink);outline-offset:3px}
 .place-map .map-state:hover{stroke-width:1.6}
 .place-map .map-state.selected{stroke:#2b2140!important;stroke-width:1.6!important;filter:none!important}
 .place-map .sel-overlay{fill:url(#selHatch);stroke:#2b2140;stroke-width:1.6;pointer-events:none}
-.place-legend{position:absolute;left:18px;bottom:14px;display:flex;align-items:center;gap:4px;font-family:var(--pxmono);font-size:15px;color:#6b6478}
-.place-legend i{width:18px;height:12px;border:2px solid var(--pxink);display:block}
+.place-legend{position:absolute;left:18px;bottom:14px;display:flex;align-items:center;gap:5px;font-family:var(--pxmono);font-size:22px;color:#4a3f5c}
+.place-legend i{width:26px;height:17px;border:2px solid var(--pxink);display:block}
 .place-legend span{margin:0 6px}
 .place-note{position:absolute;right:18px;bottom:12px;max-width:46%;font-family:var(--pxmono);font-size:12.5px;line-height:1.25;color:#6b6478;text-align:right}
 .place-fellows{position:absolute;inset:28px 36px 56px;pointer-events:none}
@@ -224,6 +224,11 @@ button:focus-visible{outline:var(--px) solid var(--pxink);outline-offset:3px}
 .place-page #placeInfo{gap:7px;padding:14px 16px 12px}
 .place-page .place-stat{font-size:17px}
 .place-page .place-stat.small{font-size:14.5px}
+/* before a state is picked: a pixel arrow (the cover's arrowhead plus a shaft) nudges left toward the map */
+.place-hint{display:flex;align-items:center;gap:14px;margin:16px 0 4px;font-family:var(--pxfont);font-size:11px;color:#d9343b}
+.place-arrow{width:48px;height:32px;flex:none;fill:var(--pxink);overflow:visible;filter:drop-shadow(var(--px) var(--px) 0 rgba(43,33,64,.25));animation:placeArrow 1s steps(1,end) infinite}
+@keyframes placeArrow{50%{transform:translateX(-8px)}}
+@media (prefers-reduced-motion:reduce){.place-arrow{animation:none}}
 .px-mini{padding:12px 12px 10px;gap:8px}
 .px-mini h3{margin:0}
 .px-mini .family-switch button{font-size:8.5px!important;padding:4px 6px!important}
@@ -264,6 +269,7 @@ button:focus-visible{outline:var(--px) solid var(--pxink);outline-offset:3px}
 .ridge-canvas svg{width:100%;height:100%;max-height:100%}
 .ridge-canvas text{font-family:var(--pxmono);font-size:18px;fill:var(--ink)}
 .ridge-canvas text.lbl{font-family:var(--pxfont2);font-size:11px;fill:#6b6478}
+.ridge-canvas text.lbl.ridge-axis{font-size:17px;fill:#4a3f5c}
 .ridge{fill:rgba(228,225,232,.55);stroke:#2b2140;stroke-width:2;transition:fill .3s steps(3);cursor:pointer}
 .ridge.hov{fill:color-mix(in srgb,var(--c) 55%,#fff)}
 .ridge.lit{fill:var(--c);stroke-width:3}
@@ -363,21 +369,47 @@ button:focus-visible{outline:var(--px) solid var(--pxink);outline-offset:3px}
 .gal-svg{width:100%;height:100%;max-height:100%}
 .gal-svg text{font-family:var(--pxmono);font-size:16px;fill:var(--pxink)}
 .gal-svg text.lbl{font-family:var(--pxfont2);font-size:10px;fill:#6b6478}
-.gal-svg .gal-lab{font-family:var(--pxfont2);font-size:12px;paint-order:stroke;stroke:#fff;stroke-width:3px;pointer-events:none}
-.gal-svg .gal-num{font-family:var(--pxfont2);font-size:10px;pointer-events:none}
+/* axis titles (larger), each followed on the same line by the red note for its corner */
+.gal-svg text.gal-axis{font-family:var(--pxfont2);font-size:14px;fill:var(--pxink)}
+.gal-svg .gal-quad{fill:#d9343b}
+/* both axis arrows from one symbol font: the pixel font has → but not ↑, so they would otherwise mismatch */
+.gal-svg .gal-arr{font-family:"Segoe UI Symbol","Noto Sans Symbols 2","DejaVu Sans",sans-serif;font-size:15px;font-weight:700}
+/* bubble labels: hidden until their industry is hovered or pinned (.hi on the label, or on the bubble group during PLAY) */
+.gal-svg .gal-lab{font-family:var(--pxfont2);font-size:12px;paint-order:stroke;stroke:#fff;stroke-width:3px;pointer-events:none;opacity:0;transition:opacity .2s}
 .gal-b circle{stroke:#2b2140;stroke-width:2.5;opacity:.92;cursor:pointer;transition:opacity .2s,stroke-width .15s}
 .gal-b.hi circle{stroke-width:4;opacity:1}
-.gal-b.dim circle{opacity:.15}
-.gal-lab.dim,.gal-num.dim{opacity:.15}.gal-lab.hi{fill:#d9343b}
-.gal-link{stroke:#2b2140;stroke-width:1.5;stroke-dasharray:3 4;opacity:.3;transition:opacity .2s}
-.gal-link.hi{opacity:1;stroke:#d9343b;stroke-width:2.5}.gal-link.dim{opacity:.05}
-.gal-chips{left:auto;right:14px;bottom:12px}
-.gal-banner{right:auto;left:50%;top:14px;bottom:auto;transform:translateX(-50%);min-width:0;padding:8px 14px}
-.gal-banner .rb-top{margin-bottom:4px}
+/* other industries disappear (not just fade) while one is hovered or pinned, and cannot be hovered */
+.gal-b.dim circle{opacity:0}
+.gal-b.dim{pointer-events:none}
+/* an industry's own name is never repeated on its bubbles: while it is highlighted (hover or pin) they show career names */
+.gal-svg .gal-lab.dim{opacity:0}
+/* while an industry is pinned: no industry-name labels; its bubbles show their career names instead (.gal-clab) */
+.gal-page.gal-pinned .gal-svg .gal-lab{opacity:0}
+.gal-svg .gal-clab{font-family:var(--pxfont2);font-size:12px;fill:var(--pxink);paint-order:stroke;stroke:#fff;stroke-width:3px;pointer-events:none;opacity:0;transition:opacity .2s}
+.gal-svg .gal-clab.hi,.gal-svg .gal-b.hi .gal-clab{opacity:1}
+.gal-svg .gal-plink{fill:none}   /* PLAY: the highlighted industry's line, redrawn every frame */
+/* hover highlight once a career is filtered or an industry pinned (.focus, see bindGalaxy): red ring + label, nothing hidden.
+   Career mode shows the industry name; industry mode turns the (already visible) career label red. */
+.gal-b.focus circle{stroke:#d9343b;stroke-width:5;opacity:1}
+.gal-svg .gal-lab.focus{opacity:1;fill:#d9343b}
+.gal-page.gal-pinned .gal-svg .gal-clab.focus{fill:#d9343b}
+/* links between one industry's bubbles: hidden until that industry is hovered or pinned (hi), so the default view stays clean */
+.gal-link{stroke:#2b2140;stroke-width:1.5;stroke-dasharray:3 4;opacity:0;transition:opacity .2s}
+.gal-link.hi{opacity:1;stroke:#d9343b;stroke-width:2.5}.gal-link.dim{opacity:0}
+/* the chart box sits in .gal-main; PLAY + the 11 year buttons hang below it, centred (between Back and Next) */
+.gal-main{position:relative;display:grid;min-height:0;min-width:0}
+.door-chips.gal-chips{position:absolute;top:calc(100% + 12px);left:50%;right:auto;bottom:auto;transform:translateX(-50%);flex-wrap:nowrap;max-width:none;z-index:5}
+.door-chips.gal-chips button{font-size:10px!important;padding:7px 8px!important;white-space:nowrap}
 .gal-list{display:flex;flex-direction:column;gap:2px;max-height:430px;overflow:auto}
 .gal-row{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;border:0;border-left:8px solid transparent;background:transparent;padding:5px 6px;font-family:var(--pxmono);font-size:17px;line-height:1.1;color:var(--pxink);text-align:left;cursor:pointer;border-bottom:2px dotted rgba(43,33,64,.3)}
 .gal-row i{display:inline-block;width:11px;height:11px;border:2px solid #2b2140;margin-left:2px}
 button.gal-row:hover{background:rgba(242,200,75,.35)}
+/* side panel: career rows (filter, with medians) above industry rows (pin); the active row in each list is highlighted */
+.gal-cars .gal-row{font-size:15px;padding:4px 6px}
+button.gal-row.on{background:rgba(242,200,75,.6);font-weight:700}
+.px-side-title.gal-sub{font-size:11px;padding-bottom:6px;margin-top:4px}
+.gal-inds{max-height:none;overflow:visible}   /* all 10 industries at once, no scrolling */
+.gal-inds .gal-row{padding:4px 6px}
 .door-chip-lbl{font-family:var(--pxfont2);font-size:9px;color:#6b6478;align-self:center;margin:0 2px 0 6px}
 .door-chips{flex-wrap:wrap;max-width:70%}
 
@@ -386,8 +418,6 @@ button.gal-row:hover{background:rgba(242,200,75,.35)}
 .gt-name{font-family:var(--pxfont);font-size:12px;line-height:1.5;border-left:8px solid var(--mark);padding-left:8px;margin-bottom:6px}
 .gt-row{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}.gt-row span{color:#6b6478;min-width:92px;font-family:var(--pxfont2);font-size:9px;text-transform:uppercase}.gt-row small{color:#6b6478;font-size:14px}
 
-.gal-trails{pointer-events:none}
-.gal-svg .gal-yr{font-family:var(--pxfont2);font-size:10px;fill:#2b2140;paint-order:stroke;stroke:#fff;stroke-width:3px}
 .gal-play{background:var(--mark)!important}
 .px-side .game-stat.small span{display:block;white-space:normal!important;font-size:14px;line-height:1.25;margin:2px 0}
 .gal-svg .gal-yearbig{font-family:var(--pxfont);font-size:34px;fill:rgba(43,33,64,.18)}
@@ -442,7 +472,7 @@ button.gal-row:hover{background:rgba(242,200,75,.35)}
 /* door page: fixed view, note where the metric chips used to be */
 .door-note{position:absolute;left:14px;bottom:10px;max-width:47%;font-family:var(--pxmono);font-size:15px;line-height:1.05;color:#6b6478}
 /* page 2: scale note — every career is 100 fellows */
-.piles-note{position:absolute;right:14px;top:12px;z-index:3;pointer-events:none;text-align:right;font-family:var(--pxfont2);font-size:10px;line-height:1.7;color:#6b6478}
+.piles-note{position:absolute;right:16px;top:14px;z-index:3;pointer-events:none;text-align:right;font-family:var(--pxfont2);font-size:15px;line-height:1.6;color:#4a3f5c}
 /* door page entrance: boxes start empty; fellows run in (runDoorFellows), then labels → bars → ribbons → left chart fade in */
 .door-page .door-txt,.door-page .door-head,.door-page .door-bars,.door-page .door-ribbons,.door-page .door-left .door-svg,.door-page .door-note{transition:opacity .6s steps(6)}
 .door-page .door-bars{transition-delay:.15s}
@@ -460,3 +490,313 @@ button.gal-row:hover{background:rgba(242,200,75,.35)}
 .door-face{cursor:pointer}
 /* race page: the betting question is the page's task, so it is larger than the other prompts */
 .race-ask{font-size:16px;line-height:1.5}
+
+/* ---------- Welcome page (page 2): the chosen fellow congratulates you, explains the job and maps the journey ---------- */
+.welcome-layout{display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.4fr);gap:38px;height:calc(100% - 150px);min-height:0}
+/* no frame around the fellow: it stands on the page itself */
+.welcome-hero{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:18px;min-height:0}
+/* same two layers and idle as the cover: props stay still, only the person hops (cvIdle) */
+.welcome-stack{position:relative;width:100%;aspect-ratio:556/377}
+.welcome-stack img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(var(--px) var(--px) 0 rgba(43,33,64,.22))}
+.ws-person{animation:cvIdle 1.8s steps(1,end) infinite}
+.welcome-tag{display:flex;gap:12px;align-items:baseline;background:var(--pxmark);border:var(--px) solid var(--pxink);box-shadow:var(--px) var(--px) 0 var(--pxink);padding:10px 16px}
+.welcome-tag b{font-family:var(--pxfont);font-size:16px;color:var(--pxink)}
+.welcome-tag span{font-family:var(--pxfont2);font-size:11px;text-transform:uppercase;color:var(--pxink)}
+.welcome-talk{display:flex;flex-direction:column;justify-content:center;gap:34px;min-height:0}
+/* dialogue box with a pixel tail pointing at the fellow */
+.welcome-bubble{position:relative;background:#fff;border:var(--px) solid var(--pxink);box-shadow:var(--px) var(--px) 0 var(--pxink);padding:18px 22px}
+.welcome-bubble::before{content:"";position:absolute;left:-26px;top:30px;border:11px solid transparent;border-right:15px solid var(--pxink)}
+.welcome-bubble p{margin:0 0 12px;font-family:var(--pxmono);font-size:31px;line-height:1.12;color:var(--pxink)}
+.welcome-bubble p+p{font-size:26px;color:#4a3f5c}.welcome-bubble p:last-child{margin:0}.welcome-bubble p b{color:var(--pxink)}
+.wl-hi{font-family:var(--pxfont);font-size:16px;color:#d9343b;margin-right:6px}
+.welcome-bubble mark{background:var(--c);color:var(--pxink);padding:0 6px}
+/* journey A-G: a route of stops joined by a dashed path */
+.wj-title{font-family:var(--pxfont2);font-size:15px;text-transform:uppercase;color:var(--pxink);margin-bottom:12px}
+.wj-path{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;position:relative}
+/* the dashed line grows box by box: hidden until the first box shows (2.15s), then one step every .18s, in sync with the stops */
+.wj-path::before{content:"";position:absolute;left:7%;right:7%;top:10px;border-top:4px dashed rgba(43,33,64,.4);transform-origin:left center;animation:wLine 1.08s steps(6,end) 2.15s both}
+@keyframes wLine{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.wj-path li{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;animation:wIn .45s steps(4) both;animation-delay:var(--d)}
+.wj-n{width:24px;height:24px;background:#fff;border:var(--px) solid var(--pxink);box-shadow:3px 3px 0 var(--pxink)}
+.wj-path li:first-child .wj-n{background:var(--pxmark)}
+.wj-path b{font-family:var(--pxfont2);font-size:14px;text-transform:uppercase;color:var(--pxink)}
+.wj-path small{font-family:var(--pxmono);font-size:21px;line-height:1;color:#6b6478}
+.welcome-ready{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.wr-ask{font-family:var(--pxfont);font-size:20px;color:var(--pxink)}
+.welcome-go{animation:wPulse 1.2s steps(2) infinite}
+/* lines appear one by one (delays in --d); paused during the title intro by .intro-hold */
+.wl{animation:wIn .45s steps(4) both;animation-delay:var(--d)}
+@keyframes wIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes wPulse{0%,100%{transform:none}50%{transform:translateY(-3px)}}
+@media (prefers-reduced-motion:reduce){.welcome-page *,.welcome-page *::before{animation:none!important}}
+
+/* ---------- Page stories: a short read under the title before the page itself (PAGE_STORIES in app.js) ---------- */
+.page-story{height:calc(100% - 150px);display:flex;flex-direction:column;justify-content:center;gap:22px;padding:0 6px 40px}
+.page-story p{margin:0;max-width:1180px;font-family:var(--pxmono);font-size:29px;line-height:1.14;color:#4a3f5c}
+.page-story p b{color:var(--pxink)}
+.page-story mark{background:var(--c);color:var(--pxink);padding:0 6px}
+.page-story .ps-lead{max-width:none;white-space:nowrap;font-family:var(--pxfont);font-size:24px;line-height:1.5;color:var(--pxink)}
+.page-story .ps-ask{font-family:var(--pxfont2);font-size:21px;line-height:1.5;text-transform:uppercase;color:#d9343b}
+@media (prefers-reduced-motion:reduce){.page-story *{animation:none!important}}
+
+/* ---------- Page 10: you made it! drag the key into the door, it opens onto your career summary (radar) ---------- */
+.unlock-body{height:calc(100% - 150px);min-height:0}
+.key-scene{position:relative;height:100%;border:var(--px) solid var(--pxink);background:#fff;background-image:radial-gradient(circle,rgba(43,33,64,.13) 1px,transparent 1.2px);background-size:24px 24px;overflow:hidden}
+.key-ground{position:absolute;left:0;right:0;bottom:0;height:120px;background:#f6ead9;border-top:4px solid #a89bb8}
+/* the doorway: a dark frame; behind the wooden panel there is light, seen once the panel swings open (to the right) on its right hinge */
+.key-door{position:absolute;left:50%;bottom:120px;width:220px;height:300px;margin-left:-110px;background:var(--pxink);perspective:900px;perspective-origin:50% 100%;z-index:2}   /* perspective from the floor: the swinging panel grows upwards, never below the floor */
+.kd-light{position:absolute;left:16px;right:16px;top:16px;bottom:0;background:radial-gradient(ellipse at 50% 62%,#fffdf0 0,#ffe68f 62%,#f7c948 100%);opacity:0;transition:opacity .3s steps(3,end)}
+.kd-panel{position:absolute;left:16px;right:16px;top:16px;bottom:0;transform-origin:right center;transition:transform .7s steps(7,end)}
+.kd-panel svg{display:block;width:100%;height:100%}
+.kd-lock{position:absolute;left:7px;top:126px;width:51px;height:63px}   /* inside .kd-panel (188 x 284): the keyhole plate of doorPanelSvg, cells x 1-8, y 20-30 of 26 x 45 */
+.kd-sign{position:absolute;left:50%;top:-62px;transform:translateX(-50%);white-space:nowrap;font-family:var(--pxfont);font-size:16px;color:var(--pxink);background:var(--pxmark);border:var(--px) solid var(--pxink);box-shadow:var(--px) var(--px) 0 var(--pxink);padding:8px 14px}
+.key-door.near .kd-lock{outline:4px dashed #d9343b;outline-offset:4px;animation:kdPulse .5s steps(2) infinite}
+.key-door.turn .kd-panel{animation:kdShake .3s steps(3) 1}
+.key-door.open .kd-light{opacity:1}
+.key-door.open .kd-panel{transform:rotateY(105deg)}
+.key-door.open{box-shadow:0 0 0 8px rgba(255,230,143,.45),0 0 70px 30px rgba(255,214,90,.55);z-index:3}
+@keyframes kdPulse{50%{outline-color:transparent}}
+@keyframes kdShake{33%{transform:translateX(-3px)}66%{transform:translateX(3px)}}
+/* the fellow (same idle hop as the cover) with the key bobbing above, and a speech bubble */
+.key-fellow{position:absolute;left:calc(50% - 470px);bottom:120px;width:150px;height:150px;z-index:3}
+.key-fellow img{display:block;width:100%;height:100%;image-rendering:pixelated;animation:cvIdle 1.8s steps(1,end) infinite}
+.key-fellow.going{transition:transform .95s linear,opacity .25s}
+.key-fellow.going img{animation:none}
+.key-key{position:absolute;left:calc(50% - 460px);bottom:268px;width:130px;height:49px;padding:0;border:0;background:none;cursor:grab;touch-action:none;z-index:5;animation:keyBob 1.1s steps(2,end) infinite}
+.key-key svg{display:block;width:100%;height:100%;filter:drop-shadow(4px 4px 0 rgba(43,33,64,.25))}
+.key-key:focus-visible{outline:4px dashed var(--pxink);outline-offset:6px}
+.key-key.dragging{animation:none;cursor:grabbing}
+@keyframes keyBob{50%{transform:translateY(-8px)}}
+.key-bubble{position:absolute;left:calc(50% - 660px);bottom:420px;max-width:340px;z-index:6;background:#fff;border:var(--px) solid var(--pxink);box-shadow:var(--px) var(--px) 0 var(--pxink);padding:14px 18px;font-family:var(--pxmono);font-size:24px;line-height:1.12;color:var(--pxink)}
+/* the hint: a dashed red arrow from the key to the lock, shown once the key has dropped into the fellow's hands */
+.key-hint{position:absolute;left:calc(50% - 322px);bottom:232px;width:250px;height:80px;z-index:4;opacity:0;transition:opacity .3s steps(3);pointer-events:none}
+.key-hint.show{opacity:1}
+.key-hint svg{display:block;overflow:visible}
+.key-hint .kh-line{fill:none;stroke:#d9343b;stroke-width:4;stroke-dasharray:8 7;animation:khMarch .6s steps(3) infinite}
+.key-hint .kh-head{fill:#d9343b}
+.key-hint span{position:absolute;left:96px;top:78px;font-family:var(--pxfont);font-size:11px;color:#d9343b;white-space:nowrap;background:#fff;border:3px solid #d9343b;padding:5px 7px}
+@keyframes khMarch{to{stroke-dashoffset:-15}}
+.key-key.kk-wait{visibility:hidden;animation:none}
+.key-spark{position:absolute;width:96px;height:96px;image-rendering:pixelated;pointer-events:none;z-index:6}
+/* the building's ground floor (same parts and colours as the company buildings on the page before) and a striped doormat */
+.key-bld{position:absolute;left:50%;bottom:120px;width:600px;height:400px;margin-left:-300px;z-index:1}
+.key-bld svg{display:block;width:100%;height:100%}
+.key-bld .kf-name{font-size:14px}
+.key-mat{position:absolute;left:calc(50% - 120px);bottom:108px;width:240px;height:14px;z-index:2;background:repeating-linear-gradient(90deg,var(--c) 0 20px,#fff 20px 40px);border:3px solid var(--pxink)}
+/* the journey so far: the welcome page's path, each stop ticked in turn; the last stop (Summary) is locked */
+.kj{position:absolute;left:50%;top:22px;width:840px;margin-left:-420px;z-index:2}
+.kj .wj-title{text-align:center}
+.kj-path::before{animation-delay:.3s}
+.kj-path li:first-child .wj-n{background:#fff}
+.kj-path .wj-n{display:grid;place-items:center}
+.kj-path .wj-n svg{width:16px;height:16px;fill:var(--pxink)}
+.kj-path .kj-ck{opacity:0}
+.kj-path li.done .wj-n{background:var(--pxmark)}
+.kj-path li.done .kj-ck{opacity:1;animation:kjPop .3s steps(3)}
+.kj-path .kj-hole{fill:#fff}
+.kj-path li.lock.ready .wj-n{animation:kjGlow .6s steps(2) infinite}
+@keyframes kjPop{from{transform:scale(2.2)}to{transform:scale(1)}}
+@keyframes kjGlow{50%{background:var(--pxmark)}}
+/* the summary: radar on the left, the numbers behind each spoke on the right */
+.sum-layout{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:26px;height:100%;min-height:0}
+.sum-card{position:relative;min-height:0;border:var(--px) solid var(--pxink);background:#fff;background-image:radial-gradient(circle,rgba(43,33,64,.13) 1px,transparent 1.2px);background-size:24px 24px}
+.sum-radar-wrap{position:absolute;inset:34px 10px 26px}
+.sum-radar{display:block;width:100%;height:100%}
+.sum-stamp{position:absolute;left:16px;top:14px;z-index:2;font-family:var(--pxfont);font-size:14px;color:var(--pxink);background:var(--pxmark);border:3px solid var(--pxink);padding:6px 10px}
+.sum-ring-note{position:absolute;right:16px;bottom:12px;font-family:var(--pxfont2);font-size:15px;color:#4a3f5c}
+.sum-ring{fill:none;stroke:#d9d1e2;stroke-width:2;stroke-dasharray:6 6}
+.sum-ring.outer{stroke:#a89bb8;stroke-width:3;stroke-dasharray:none}
+.sum-spoke{stroke:#d9d1e2;stroke-width:2}
+.sum-shape.me{fill:var(--c);fill-opacity:.6;stroke:var(--pxink);stroke-width:4;stroke-linejoin:miter}
+.sum-shape.cmp{fill:var(--c);fill-opacity:.18;stroke:var(--pxink);stroke-width:3;stroke-dasharray:10 7}
+.sum-pt{fill:#fff;stroke:var(--pxink);stroke-width:3}
+.sum-grow{animation:sumGrow .9s steps(9,end) both}
+@keyframes sumGrow{from{transform:scale(0)}to{transform:scale(1)}}
+.sum-lab-stop{font-family:var(--pxfont2);font-size:13px;fill:#6b6478;text-transform:uppercase}
+.sum-lab-name{font-family:var(--pxfont2);font-size:13px;fill:var(--pxink);text-transform:uppercase}
+.sum-lab-val{font-family:var(--pxfont);font-size:20px;fill:var(--pxink)}
+.unlock-page .px-side{gap:5px}
+.sum-row{display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px;align-items:center;padding:2px 0 4px;border-bottom:3px dotted rgba(43,33,64,.18)}
+.sum-chip{font-family:var(--pxfont2);font-size:10px;text-transform:uppercase;text-align:center;color:var(--pxink);background:var(--c);border:3px solid var(--pxink);padding:4px 4px}
+.sum-txt{font-family:var(--pxmono);font-size:18px;line-height:1;color:var(--pxink)}
+.sum-cmp button.active{background:var(--c)!important}
+.sum-note{margin:2px 0 0;font-family:var(--pxmono);font-size:15px;line-height:1.1;color:#6b6478}
+@media (prefers-reduced-motion:reduce){.key-key,.key-fellow img,.sum-grow,.key-door.near .kd-lock,.key-hint .kh-line,.kj-path li,.kj-path li.done .kj-ck,.kj-path li.lock.ready .wj-n{animation:none!important}}
+
+/* ---------- Page 10: Why do some careers open more doors? one fellow walks in and explains; pick another on the right ---------- */
+.wy-layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:26px;height:calc(100% - 150px);min-height:0}
+.wy-stage{position:relative;min-height:0;overflow:hidden;border:var(--px) solid var(--pxink);background:#fff;background-image:radial-gradient(circle,rgba(43,33,64,.13) 1px,transparent 1.2px);background-size:24px 24px}
+.wy-stage .ws-ground{position:absolute;left:0;right:0;bottom:0;height:110px;background:#f6ead9;border-top:4px solid #a89bb8}
+.wy-fellow{position:absolute;left:-240px;bottom:106px;width:200px;height:200px}
+.wy-fellow img{display:block;width:100%;height:100%;image-rendering:pixelated}
+.wy-fellow.flip img{transform:scaleX(-1)}
+/* the speech bubble, to the right of the fellow, with a pixel tail pointing at it */
+.wy-bubble{position:absolute;left:400px;right:70px;top:170px;padding:18px 22px;background:#fff;border:var(--px) solid var(--pxink);box-shadow:var(--px) var(--px) 0 var(--pxink);opacity:0;transition:opacity .2s}
+.wy-bubble.show{opacity:1}
+.wy-bubble::before{content:"";position:absolute;left:-28px;bottom:12px;border:12px solid transparent;border-right:16px solid var(--pxink)}
+.wy-bubble p{margin:0 0 12px;font-family:var(--pxmono);font-size:24px;line-height:1.13;color:#4a3f5c}
+.wy-bubble p:last-child{margin:0}
+.wy-bubble p b{color:var(--pxink)}
+.wy-bubble .wy-hi{font-family:var(--pxfont);font-size:16px;line-height:1.5;color:#d9343b}
+.wy-bubble .wy-why b{display:block;margin-bottom:4px;color:var(--pxink)}
+.wy-pick{gap:10px}
+.wy-src{margin:4px 0 0;font-family:var(--pxfont2);font-size:9px;line-height:1.5;color:#6b6478}
+@media (prefers-reduced-motion:reduce){.wy-fellow{transition:none!important}}
+.key-bubble b{color:#d9343b}
+/* page 10: the career's company building (street on its right) with people going in (new hires) and out (people who leave);
+   our fellow stands on the left, about one and a half times the passers-by, under its speech bubble */
+.wy-bld{position:absolute;right:290px;bottom:106px;width:280px;height:324px;z-index:1}
+.wy-bld svg{display:block}
+.wb2-roof{fill:var(--pxink)}
+.wb2-wall{fill:color-mix(in srgb,var(--c) 40%,#fff);stroke:var(--pxink);stroke-width:3}
+.wb2-win{fill:#3b3150;stroke:var(--pxink);stroke-width:2;transition:fill .3s}
+.wb2-win.lit{fill:#ffe08a}
+.wb2-sign{fill:#fff;stroke:var(--pxink);stroke-width:2}
+.wb2-name{font-family:var(--pxfont2);font-size:11px;fill:var(--pxink)}
+.wb2-door{fill:#a8d8ea;stroke:var(--pxink);stroke-width:3}
+.wb2-doorline{stroke:var(--pxink);stroke-width:2}
+.wt{position:absolute;bottom:106px;width:60px;height:60px;pointer-events:none;z-index:3}
+.wt img{display:block;width:100%;height:100%;image-rendering:pixelated}
+.wt.in img{transform:scaleX(-1)}   /* new hires walk left, into the door; leavers walk right, away from it */
+.wt.out{bottom:112px;width:56px;height:56px;z-index:2}
+.wt.out img{filter:grayscale(1);opacity:.6}
+.wy-legend{position:absolute;right:30px;bottom:30px;display:flex;flex-direction:column;align-items:flex-end;gap:9px;font-family:var(--pxfont2);font-size:13px;color:var(--pxink);z-index:4}
+.wy-legend span{display:flex;align-items:center;gap:10px}
+.wy-legend i{display:inline-block;width:18px;height:18px;border:3px solid var(--pxink)}
+.wy-legend i.in{background:var(--c)}
+.wy-legend i.out{background:#b8b3c0}
+.wy-stage .wy-fellow{left:-140px;width:96px;height:96px;z-index:5}
+/* the bubble above our fellow, its tail pointing down at it */
+.wy-stage .wy-bubble{left:40px;right:auto;top:auto;bottom:242px;z-index:6}   /* bottom-anchored: the tail always sits just above our fellow */
+.wy-stage .wy-bubble::before{left:70px;bottom:-30px;border:14px solid transparent;border-top:18px solid var(--pxink);border-right-color:transparent}
+/* page 10: the more detailed building (on the dotted canvas and cream ground, like the other pages) */
+.wy-bld{right:270px;width:300px;height:360px}
+.wb3-ink{fill:var(--pxink)}
+.wb3-board{fill:var(--c);stroke:var(--pxink);stroke-width:3}
+.wb3-name{font-family:var(--pxfont);font-size:15px;fill:var(--pxink)}
+.wb3-wall{fill:color-mix(in srgb,var(--c) 42%,#fff);stroke:var(--pxink);stroke-width:3}
+.wb3-side{fill:color-mix(in srgb,var(--c) 55%,#2b2140 20%);stroke:var(--pxink);stroke-width:3}
+.wb3-glint{fill:#fff;opacity:.55}
+.wb3-sill{fill:#f6efe2;stroke:var(--pxink);stroke-width:1.5}
+.wb3-stripe{fill:var(--c)}.wb3-stripe-w{fill:#fff}
+.wb3-glass{fill:#a8d8ea}
+.wb3-leaf{fill:#7cc28a}.wb3-leaf2{fill:#5aa469}.wb3-pot{fill:#c96f4a}
+/* shadows under everyone on the ground */
+.wy-stage .wy-fellow::after,.wt::after{content:"";position:absolute;left:22%;right:22%;bottom:-3px;height:7px;background:rgba(43,33,64,.18);border-radius:50%;z-index:-1}
+/* the legend as a small card, top right */
+.wy-legend{top:18px;right:18px;bottom:auto;padding:12px 16px;background:#fff;border:var(--px) solid var(--pxink);box-shadow:var(--px) var(--px) 0 var(--pxink);align-items:flex-start}
+/* the speech bubble: a bit larger type, more air, "Why?" in red */
+.wy-stage .wy-bubble{padding:18px 22px}
+.wy-stage .wy-bubble p{font-size:20px;line-height:1.2}
+.wy-stage .wy-bubble .wy-why b .wy-q{color:#d9343b}
+/* ---------- Page 8: the level-up potion shop, drawn like the other pages (dotted canvas, cream ground, white boxes with ink borders) ---------- */
+.ps-shop{position:relative;height:calc(100% - 150px);overflow:hidden;border:var(--px) solid var(--pxink);user-select:none;
+ background:#fff;background-image:radial-gradient(circle,rgba(43,33,64,.13) 1px,transparent 1.2px);background-size:24px 24px}
+.ps-floor{position:absolute;left:0;right:0;bottom:0;height:70px;background:#f6ead9;border-top:4px solid #a89bb8}
+/* the hanging sign over the cabinet */
+.ps-sign{position:absolute;left:calc(100% - 436px);top:24px;z-index:2;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px}
+.ps-sign::before,.ps-sign::after{content:"";position:absolute;top:-28px;width:4px;height:28px;background:var(--pxink)}
+.ps-sign::before{left:24%}.ps-sign::after{right:24%}
+.ps-sign b{font-family:var(--pxfont);font-size:24px;font-weight:400;color:var(--pxink);background:#fff;border:var(--px) solid var(--pxink);box-shadow:var(--px) var(--px) 0 var(--pxink);padding:8px 20px;white-space:nowrap}
+.ps-sign span{font-family:var(--pxfont2);font-size:15px;color:var(--pxink);background:#fff;border:3px solid var(--pxink);padding:5px 10px;white-space:nowrap}
+/* the cabinet: four cubbies with a shelf board each, a price-style tag under each */
+.ps-cab{position:absolute;right:56px;bottom:74px;width:760px;height:380px;z-index:1;background:#fff;border:var(--px) solid var(--pxink);box-shadow:var(--px) var(--px) 0 var(--pxink)}
+.ps-slots{position:absolute;left:18px;right:18px;top:18px;height:226px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.ps-slot{position:relative;background:#f6ead9;border:3px solid var(--pxink);box-shadow:inset 0 -14px 0 #e2d0b4,inset 0 -17px 0 var(--pxink)}
+.ps-potion{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);padding:0;margin:0;border:0;background:none;line-height:0;cursor:default;color:inherit}
+.ps-potion svg{display:block}
+.ps-potion.can{cursor:pointer;animation:psBob .9s steps(2) infinite}
+.ps-potion.can:hover svg{filter:brightness(1.1) drop-shadow(0 0 6px #fff3b0)}
+.ps-potion:focus-visible{outline:3px dashed var(--pxink);outline-offset:4px}
+.ps-potion.locked svg{filter:saturate(.4) brightness(.8)}
+@keyframes psBob{50%{transform:translateX(-50%) translateY(-6px)}}
+.ps-lock{position:absolute;left:50%;bottom:52px;transform:translateX(-50%);line-height:0;pointer-events:none}
+.ps-drink{position:absolute;left:50%;top:10px;transform:translateX(-50%);white-space:nowrap;font-family:var(--pxfont2);font-size:10px;color:var(--pxink);background:#ffd84d;border:3px solid var(--pxink);padding:4px 8px;pointer-events:none;animation:psNudge .9s steps(2) infinite}
+@keyframes psNudge{50%{transform:translateX(-50%) translateY(4px)}}
+.ps-drink[hidden],.ps-lock[hidden]{display:none}
+.ps-tag{position:absolute;left:50%;top:calc(100% + 22px);transform:translateX(-50%) rotate(-2deg);display:flex;flex-direction:column;align-items:center;gap:3px;min-width:132px;padding:7px 10px;background:#fff;border:3px solid var(--pxink);box-shadow:3px 3px 0 var(--pxink)}
+.ps-tag::before{content:"";position:absolute;top:-25px;left:50%;width:3px;height:22px;background:var(--pxink)}
+.ps-tag b{font-family:var(--pxfont);font-size:13px;font-weight:400;color:var(--pxink);white-space:nowrap}
+.ps-tag b i{display:inline-block;width:10px;height:10px;margin-right:6px;border:2px solid var(--pxink)}
+.ps-tag span{font-family:var(--pxmono);font-size:22px;color:var(--pxink)}
+.ps-tag small{font-family:var(--pxfont2);font-size:10px;color:#6b6478;white-space:nowrap}
+.ps-tag em{font-family:var(--pxfont2);font-size:10px;font-style:normal;color:var(--pxink);letter-spacing:.06em;margin-bottom:-4px}   /* START / EFFECT, over the value */
+/* the fellow, its salary HUD, the flying bottle, sparkles, the +$ pop and the closing bubble */
+.ps-hud{position:absolute;left:16px;top:14px;z-index:5;display:flex;flex-direction:column;gap:4px;padding:12px 18px 11px;background:#fff;border:var(--px) solid var(--pxink);box-shadow:5px 5px 0 var(--pxink)}
+.ps-hud b{font-family:var(--pxfont);font-size:20px;font-weight:400;color:#d9343b}
+.ps-hud span{font-family:var(--pxmono);font-size:28px;line-height:1;color:var(--pxink)}
+.ps-hud small{font-family:var(--pxfont2);font-size:11px;color:#6b6478}
+.ps-fellow{position:absolute;z-index:3;transform-origin:50% 100%}
+.ps-fellow img{display:block;width:100%;height:100%;image-rendering:pixelated}
+.ps-fly{position:absolute;z-index:4;line-height:0;pointer-events:none}
+.ps-cork{position:absolute;z-index:5;line-height:0;pointer-events:none}
+.ps-spark{position:absolute;z-index:4;width:96px;height:96px;image-rendering:pixelated;pointer-events:none}
+.ps-pop{position:absolute;z-index:6;white-space:nowrap;text-align:center;font-family:var(--pxfont);font-size:26px;line-height:1.2;color:#1f8a4c;background:#fff;border:var(--px) solid var(--pxink);box-shadow:var(--px) var(--px) 0 var(--pxink);padding:8px 18px;pointer-events:none}
+.ps-pop small{display:block;margin-top:3px;font-family:var(--pxfont);font-size:14px;color:var(--pxink)}   /* the new level: MID / SENIOR / EXECUTIVE */
+.ps-bubble{position:absolute;left:40px;z-index:6;width:420px;padding:14px 18px;background:#fff;border:var(--px) solid var(--pxink);box-shadow:var(--px) var(--px) 0 var(--pxink)}
+.ps-bubble[hidden]{display:none}
+.ps-bubble::before{content:"";position:absolute;left:var(--tail,180px);bottom:-32px;border:14px solid transparent;border-top:18px solid var(--pxink)}
+.ps-bubble p{margin:0 0 10px;font-family:var(--pxmono);font-size:21px;line-height:1.15;color:var(--pxink)}
+.ps-bubble p b:first-child{color:#d9343b}
+.ps-bubble button{font-family:var(--pxfont);font-size:12px;padding:8px 12px;background:#ffd84d;border:3px solid var(--pxink);box-shadow:3px 3px 0 var(--pxink);cursor:pointer}
+.wy-chips{flex-direction:column;align-items:flex-start}
+/* page 11: the building's colours glide when the career changes */
+.wb3-board,.wb3-wall,.wb3-side,.wb3-stripe{transition:fill .9s ease}
+.wy-legend i.in{transition:background-color .9s ease}
+/* bigger, easier-to-read career chips on page 6 (Switch career) and page 11 (Pick a career) */
+.ridge-side .family-switch button{width:100%;font-size:12px!important;line-height:1.7!important;padding:8px 12px!important;white-space:normal;text-align:left}
+.wy-chips button{font-size:14px!important;line-height:1.3;padding:10px 14px!important}
+/* ---------- Page 9: Where is the pay, and where are the people? (one ring: 100 people, each block reaching out to its pay) ---------- */
+.lvm-page .piles-layout{grid-template-columns:minmax(0,1fr) 270px}
+.lvm-canvas{position:relative;border:var(--px) solid var(--pxink);background:#fff;background-image:radial-gradient(circle,rgba(43,33,64,.13) 1px,transparent 1.2px);background-size:24px 24px;overflow:hidden;min-height:0;display:grid;place-items:center;padding:6px 10px}
+.lvm-svg{width:100%;height:100%;max-height:100%}
+.lvm-svg text{font-family:var(--pxmono);font-size:22px;fill:var(--pxink)}
+.lvm-svg text.pf{font-family:var(--pxfont);font-size:11px}
+.lvm-svg text.lbl{font-family:var(--pxfont2);font-size:10px;fill:#6b6478}
+.lvm-svg .halo{paint-order:stroke;stroke:#fff;stroke-width:6px;stroke-linejoin:round}
+.lvm-scale circle{fill:none;stroke:var(--pxink);stroke-opacity:.32;stroke-width:2;stroke-dasharray:3 5}
+.lvm-svg .lvm-scale text{font-size:19px;fill:#6b6478}
+.lvm-b{cursor:pointer;transition:opacity .15s}
+.lvm-b.few{fill-opacity:.5}
+.lvm-svg.focus .lvm-b:not(.on){opacity:.15}
+.lvm-row{cursor:pointer;outline:none}
+.lvm-row .lvm-sh{fill:var(--pxink)}
+.lvm-row .lvm-btn{fill:#fff;stroke:var(--pxink);stroke-width:3}
+.lvm-row:hover .lvm-btn{fill:#fbe6a2}
+.lvm-row.on .lvm-btn{fill:var(--pxmark)}
+.lvm-row:focus-visible .lvm-btn{stroke-dasharray:8 5}
+.lvm-row:active .lvm-face{transform:translate(3px,3px)}
+.lvm-fellow{image-rendering:pixelated;pointer-events:none}
+.lvm-svg .lvm-ppl{font-size:21px;fill:#4a3f5c}
+.lvm-svg .lvm-ppl .b{fill:var(--pxink)}
+.lvm-svg .lvm-how{font-size:21px}
+.lvm-svg .lvm-ppl .b{font-weight:bold}
+.lvm-svg .lvm-big{font-size:25px;fill:var(--pxink)}
+.lvm-svg .lvm-up{font-size:20px;fill:#6b6478}
+.lvm-svg text.lvm-name{font-size:9px}
+.px-side.lvm-side{gap:12px}
+.px-side.lvm-side .lvm-note{font-size:20px;line-height:1.2;color:#4a3f5c}
+.px-side.lvm-side .lvm-note b{color:var(--pxink)}
+.px-side.lvm-side .game-stat.small span{font-size:19px;line-height:1.2;margin:10px 0 0}
+.px-side.lvm-side .family-switch{display:flex;flex-direction:column;gap:8px}
+.px-side.lvm-side .family-switch button{width:100%;font-size:12px!important;line-height:1.6!important;padding:8px 12px!important;white-space:normal;text-align:left}
+/* ---------- Page 14: References, data and team ---------- */
+.cr-layout{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(0,1fr);gap:26px;height:calc(100% - 150px);min-height:0}
+.cr-card{background:#fff;border:var(--px) solid var(--pxink);box-shadow:var(--px) var(--px) 0 var(--pxink);padding:16px 22px 18px;min-height:0;overflow:auto}
+.cr-card h2{margin:0 0 12px;padding-bottom:10px;font-family:var(--pxfont);font-size:13px;font-weight:400;color:var(--pxink);border-bottom:var(--px) dotted rgba(43,33,64,.3)}
+.cr-side{display:flex;flex-direction:column;gap:22px;min-height:0}
+.cr-refs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.cr-ref{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:14px;align-items:start;padding-bottom:8px;border-bottom:2px dashed rgba(43,33,64,.14)}
+.cr-ref:last-child{border-bottom:0;padding-bottom:0}
+.cr-n{font-family:var(--pxfont);font-size:10px;color:#fff;background:var(--pxink);padding:5px 0;text-align:center}
+.cr-ref b{display:block;font-family:var(--pxfont2);font-weight:700;font-size:14px;line-height:1.3;color:var(--pxink)}
+.cr-ref small{display:block;font-family:var(--pxmono);font-size:18px;line-height:1.05;color:#6b6478}
+.cr-use{display:block;font-family:var(--pxmono);font-size:18px;line-height:1.05;color:#4a3f5c}
+.cr-use i{font-style:normal;color:var(--pxink)}
+.cr-ref a{align-self:center;font-family:var(--pxmono);font-size:19px;color:var(--pxink);text-decoration:none;white-space:nowrap;border-bottom:3px solid var(--pxmark)}
+.cr-ref a:hover{background:#fbe6a2}
+.cr-team ul,.cr-notes{list-style:none;margin:0;padding:0}
+.cr-team li{padding:4px 0;font-family:var(--pxfont2);font-weight:700;font-size:18px;color:var(--pxink)}
+.cr-team li.cr-todo{color:#b0a8bd}
+.cr-notes li{position:relative;margin:0 0 10px;padding-left:18px;font-family:var(--pxmono);font-size:20px;line-height:1.15;color:#4a3f5c}
+.cr-notes li::before{content:'■';position:absolute;left:0;top:2px;font-size:11px;color:var(--pxink)}

@@ -28,7 +28,7 @@ function arrow(dir){
 const ring = `<svg class="ring" viewBox="0 0 200 40" preserveAspectRatio="none"><path d="M12,21 C20,4 120,2 172,8 C198,12 196,30 160,34 C100,40 20,38 8,28 C2,22 10,14 30,12" fill="none" stroke="#20152e" stroke-width="2.4" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
 
 window.renderCoverV16 = function(ctx){
-  const {state, families, meta, shortName, esc} = ctx;
+  const {state, families, meta, shortName, esc} = ctx; const total = ctx.total || 18;
   const idx = Math.max(0, families.indexOf(state.selectedFamily));
   const f = families[idx], m = meta[f];
   const items = families.map((fam,i)=>`<button class="cv-item ${i===idx?'active':''}" data-cv-pick="${i}"><span class="nm">${esc(shortName[fam])}</span><span class="who">${esc(meta[fam].name)}</span>${ring}</button>`).join('');
@@ -44,13 +44,13 @@ window.renderCoverV16 = function(ctx){
     <aside class="cv-list scrap-paper"><h3>Six careers</h3>${items}</aside>
 
     <button class="cv-start scrap-paper mark" data-nav="next">Start</button>
-    <div class="cv-start-note" id="cvStartNote">follow ${esc(m.name)} through 19 pages</div>
-    <div class="cv-count">page 1 / 19</div>
+    <div class="cv-start-note" id="cvStartNote">follow ${esc(m.name)} through ${total} pages</div>
+    <div class="cv-count">page 1 / ${total}</div>
   </section>`;
 };
 
 window.bindCoverV16 = function(ctx){
-  const {stage, state, families, meta, shortName, esc} = ctx;
+  const {stage, state, families, meta, shortName, esc} = ctx; const total = ctx.total || 18;
   const root = stage.querySelector('#coverV16'); if(!root) return;
   const fig = root.querySelector('#cvFigure');
   // warm the cache so swaps are instant
@@ -73,7 +73,7 @@ window.bindCoverV16 = function(ctx){
     fig.appendChild(nu);
 
     root.querySelector('#cvTag').innerHTML = `<b>${esc(m.name)}</b><span>${esc(shortName[f])}</span>`;
-    root.querySelector('#cvStartNote').textContent = `follow ${m.name} through 19 pages`;
+    root.querySelector('#cvStartNote').textContent = `follow ${m.name} through ${total} pages`;
     root.querySelectorAll('.cv-item').forEach((b,i)=>b.classList.toggle('active', i===idx));
   }
 

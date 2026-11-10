@@ -374,3 +374,12 @@ button:focus:not(:focus-visible){outline:none}
 #side-pager button:focus-visible{outline:2px solid #f2c84b;outline-offset:-2px}
 #side-pager .sp-count{margin-top:12px;color:#f7f1e6;font-size:10px;line-height:1.7;text-align:center}
 #side-pager .sp-count span{display:block;opacity:.55;font-size:8px}
+/* START OVER under the page count: a small cream box with a restart arrow, yellow on hover. Off (faded out, but still
+   taking its place so the squares do not move) on the cover and on the last page */
+#side-pager .sp-restart{width:auto;height:auto;margin-top:22px;padding:7px 6px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;border:2px solid rgba(247,241,230,.55);color:#f7f1e6;font-family:inherit;transition:opacity .9s ease,visibility .9s,color .15s,border-color .15s}
+#side-pager .sp-restart::before{content:none}
+#side-pager .sp-restart i{font-style:normal;font-size:18px;line-height:1}
+#side-pager .sp-restart span{font-size:7px;line-height:1.5;text-align:center;opacity:.8}
+#side-pager .sp-restart:hover{border-color:#f2c84b;color:#f2c84b}
+#side-pager .sp-restart:hover span{opacity:1}
+#side-pager .sp-restart.off{opacity:0;visibility:hidden;pointer-events:none}
